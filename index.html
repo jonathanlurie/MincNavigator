@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <script src="js/pako.js"></script>
+    <script src="js/hdf5_tools.js"></script>
+    <script src="js/hdf5_reader.js"></script>
+    <script src="js/minc_reader.js"></script>
+
+    <script src="js/VectorTools.js"></script>
+    <script src="js/Plane.js"></script>
+    <script src="js/ObliqueSampler.js"></script>
+
+
+    <script src="js-lib/dat.gui.min.js"></script>
+    <script src="js-lib/three.js"></script>
+    <script src="js-lib/OrbitControls.js"></script>
+    <script src="js/VolumeNavigator.js"></script>
+
+
+    <style>
+        body{
+            margin: none;
+            background-color: #FFF;
+            font-family: sans-serif;
+            color: #AAA;
+        }
+
+        #navigatorDiv{
+            background-color: #FFF;
+            width: 600px;
+            height: 600px;
+        }
+
+        #sliceCanvas{
+          width: 600px;
+          height: 600px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <p>
+      <input type="file" id="myFile">
+    </p>
+
+    <div style="display: flex;">
+      <div id="navigatorDiv"></div>
+      <canvas id="sliceCanvas"></canvas>
+    </div>
+
+    <script>
+    var mincVolume = null;
+    var plane = new Plane();
+    var obliqueSampler = null;
+    var volumeNav = null;
+
+
+    function openHdf5(buffer){
+        mincVolume = readMincBuffer(buffer);
+        console.log("Minc volume loaded.");
+
+        //plane.makeFromOnePointAndNormalVector([150, 150, 150], [0, 1, 1]);
+
+        // defining th oblique sampler
+        obliqueSampler = new ObliqueSampler(mincVolume, plane);
+        obliqueSampler.update();
+
+        /*
+        var t0 = performance.now();
+        obliqueSampler.setSamplingFactor(1);
+        obliqueSampler.startSampling(false);
+        var t1 = performance.now();
+
+        var imageData = obliqueSampler.exportForCanvas(1);
+        console.log("Call to startSampling took " + (t1 - t0) + " milliseconds.")
+
+        loadImageDataIntoCanvas(imageData, "sliceCanvas");
+
+        //var dimensions = mincVolume.getDimensionInfo();
+        //console.log(dimensions);
+        */
+
+        initVolumeNavigator();
+    }
+
+
+    function initVolumeNavigator(){
+      // the outer box size
+      var outerBoxOptions = {
+          xSize: 386,
+          ySize: 303,
+          zSize: 348
+      }
+
+      // the inner box size and offset
+      var innerBoxOptions = {
+          xSize: outerBoxOptions.xSize / 2,
+          ySize: outerBoxOptions.ySize / 2,
+          zSize: outerBoxOptions.zSize / 2,
+          xOrigin: outerBoxOptions.xSize / 4,
+          yOrigin: outerBoxOptions.ySize / 4,
+          zOrigin: outerBoxOptions.zSize / 4
+      }
+
+      console.log(innerBoxOptions);
+
+      // creating a VolumeNavigator instance
+      volumeNav = new VolumeNavigator(outerBoxOptions, innerBoxOptions, "navigatorDiv");
+
+      // optional: this callback is called when a slider is moving (mouse down)
+      volumeNav.setOnChangeCallback(loadLowResSlice);
+
+      // optional: this callback is called when a slider is released (mouse up)
+      volumeNav.setOnFinishChangeCallback(loadFullResSlice);
+    }
+
+
+    function loadLowResSlice(){
+      plane.makeFromOnePointAndNormalVector(
+        volumeNav.getPlanePoint(),
+        volumeNav.getPlaneNormal()
+      );
+
+      obliqueSampler.update();
+
+      var t0 = performance.now();
+      obliqueSampler.setSamplingFactor(0.5);
+      obliqueSampler.startSampling(false);
+      var t1 = performance.now();
+      console.log("Call to startSampling took " + (t1 - t0) + " milliseconds.")
+
+      var imageData = obliqueSampler.exportForCanvas(1);
+      loadImageDataIntoCanvas(imageData, "sliceCanvas");
+
+    }
+
+    function loadFullResSlice(){
+
+      plane.makeFromOnePointAndNormalVector(
+        volumeNav.getPlanePoint(),
+        volumeNav.getPlaneNormal()
+      );
+
+      obliqueSampler.update();
+
+      var t0 = performance.now();
+      obliqueSampler.setSamplingFactor(1);
+      obliqueSampler.startSampling(false);
+      var t1 = performance.now();
+      console.log("Call to startSampling took " + (t1 - t0) + " milliseconds.")
+
+      var imageData = obliqueSampler.exportForCanvas(1);
+      loadImageDataIntoCanvas(imageData, "sliceCanvas");
+    }
+
+
+    function loadImageDataIntoCanvas(imgData, canvasName){
+      //var canvas = document.createElement("canvas");
+      var canvas = document.getElementById(canvasName);
+      var context = canvas.getContext("2d");
+
+
+      canvas.width = imgData.width;
+      canvas.height = imgData.height;
+
+
+      context.fillStyle = "#00ff00";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.putImageData(imgData, 0, 0);
+    }
+
+
+
+
+    function handleFileSelect(evt) {
+        var files = evt.target.files; // FileList object
+
+        // Loop through the FileList and render image files as thumbnails.
+        for (var i = 0, f; f = files[i]; i++) {
+            var reader = new FileReader();
+
+            reader.onloadend = function(event) {
+                var result = event.target.result;
+                openHdf5(result);
+            }
+
+            reader.onerror = function() {
+                var error_message = "error reading file: " + filename;
+
+                BrainBrowser.events.triggerEvent("error", { message: error_message });
+                throw new Error(error_message);
+            };
+
+            reader.readAsArrayBuffer(files[i]);
+
+        }
+    }
+
+
+    // Check for the various File API support.
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+        // Great success! All the File APIs are supported.
+        document.getElementById('myFile').addEventListener('change', handleFileSelect, false);
+    } else {
+        console.log('The File APIs are not fully supported in this browser.');
+    }
+
+
+
+
+
+    </script>
+
+</body>
+</html>

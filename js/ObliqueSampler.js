@@ -265,6 +265,7 @@ ObliqueSampler.prototype.initObliqueImage = function(datatype, width, height){
   switch (datatype) {
     case 'int8':
       imageTypedArray = new Int8Array(width * height);
+      imageTypedArray.fill(255);
       break;
     case 'int16':
       imageTypedArray = new Int16Array(width * height);

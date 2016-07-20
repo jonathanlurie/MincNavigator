@@ -89,6 +89,31 @@
 
 
     function initVolumeNavigator(){
+      var dimensionInfo = mincVolume.getDimensionInfo();
+      var innerBoxInfo = mincVolume.getDataInnerBox();
+
+      console.log(dimensionInfo);
+      console.log(innerBoxInfo);
+
+
+      // the outer box size
+      var outerBoxOptions = {
+          xSize: dimensionInfo[0].space_length,
+          ySize: dimensionInfo[1].space_length,
+          zSize: dimensionInfo[2].space_length
+      }
+
+      var innerBoxOptions = {
+          xSize: innerBoxInfo[0].end - innerBoxInfo[0].start,
+          ySize: innerBoxInfo[1].end - innerBoxInfo[1].start,
+          zSize: innerBoxInfo[2].end - innerBoxInfo[2].start,
+          xOrigin: innerBoxInfo[0].start,
+          yOrigin: innerBoxInfo[1].start,
+          zOrigin: innerBoxInfo[2].start
+      }
+
+
+      /*
       // the outer box size
       var outerBoxOptions = {
           xSize: 386,
@@ -105,6 +130,7 @@
           yOrigin: outerBoxOptions.ySize / 4,
           zOrigin: outerBoxOptions.zSize / 4
       }
+      */
 
       console.log(innerBoxOptions);
 
@@ -127,11 +153,11 @@
 
       obliqueSampler.update();
 
-      var t0 = performance.now();
+      //var t0 = performance.now();
       obliqueSampler.setSamplingFactor(0.5);
       obliqueSampler.startSampling(false);
-      var t1 = performance.now();
-      console.log("Call to startSampling took " + (t1 - t0) + " milliseconds.")
+      //var t1 = performance.now();
+      //console.log("Call to startSampling took " + (t1 - t0) + " milliseconds.")
 
       var imageData = obliqueSampler.exportForCanvas(1);
       loadImageDataIntoCanvas(imageData, "sliceCanvas");

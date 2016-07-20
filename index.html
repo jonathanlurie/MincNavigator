@@ -34,8 +34,10 @@
         }
 
         #sliceCanvas{
+
           width: 600px;
           height: 600px;
+
         }
 
     </style>
@@ -63,38 +65,22 @@
         mincVolume = readMincBuffer(buffer);
         console.log("Minc volume loaded.");
 
-        //plane.makeFromOnePointAndNormalVector([150, 150, 150], [0, 1, 1]);
-
         // defining th oblique sampler
         obliqueSampler = new ObliqueSampler(mincVolume, plane);
         obliqueSampler.update();
 
-        /*
-        var t0 = performance.now();
-        obliqueSampler.setSamplingFactor(1);
-        obliqueSampler.startSampling(false);
-        var t1 = performance.now();
-
-        var imageData = obliqueSampler.exportForCanvas(1);
-        console.log("Call to startSampling took " + (t1 - t0) + " milliseconds.")
-
-        loadImageDataIntoCanvas(imageData, "sliceCanvas");
-
-        //var dimensions = mincVolume.getDimensionInfo();
-        //console.log(dimensions);
-        */
-
         initVolumeNavigator();
+
+        // load the first image
+        // (otherwise the user would have to play with slider to show the first image)
+        loadFullResSlice();
     }
 
 
     function initVolumeNavigator(){
+
       var dimensionInfo = mincVolume.getDimensionInfo();
       var innerBoxInfo = mincVolume.getDataInnerBox();
-
-      console.log(dimensionInfo);
-      console.log(innerBoxInfo);
-
 
       // the outer box size
       var outerBoxOptions = {
@@ -103,6 +89,7 @@
           zSize: dimensionInfo[2].space_length
       }
 
+      // the inner box
       var innerBoxOptions = {
           xSize: innerBoxInfo[0].end - innerBoxInfo[0].start,
           ySize: innerBoxInfo[1].end - innerBoxInfo[1].start,
@@ -111,28 +98,6 @@
           yOrigin: innerBoxInfo[1].start,
           zOrigin: innerBoxInfo[2].start
       }
-
-
-      /*
-      // the outer box size
-      var outerBoxOptions = {
-          xSize: 386,
-          ySize: 303,
-          zSize: 348
-      }
-
-      // the inner box size and offset
-      var innerBoxOptions = {
-          xSize: outerBoxOptions.xSize / 2,
-          ySize: outerBoxOptions.ySize / 2,
-          zSize: outerBoxOptions.zSize / 2,
-          xOrigin: outerBoxOptions.xSize / 4,
-          yOrigin: outerBoxOptions.ySize / 4,
-          zOrigin: outerBoxOptions.zSize / 4
-      }
-      */
-
-      console.log(innerBoxOptions);
 
       // creating a VolumeNavigator instance
       volumeNav = new VolumeNavigator(outerBoxOptions, innerBoxOptions, "navigatorDiv");
@@ -177,7 +142,7 @@
       obliqueSampler.setSamplingFactor(1);
       obliqueSampler.startSampling(false);
       var t1 = performance.now();
-      console.log("Call to startSampling took " + (t1 - t0) + " milliseconds.")
+      //console.log("Call to startSampling took " + (t1 - t0) + " milliseconds.")
 
       var imageData = obliqueSampler.exportForCanvas(1);
       loadImageDataIntoCanvas(imageData, "sliceCanvas");
@@ -185,6 +150,11 @@
 
 
     function loadImageDataIntoCanvas(imgData, canvasName){
+      // the imgData could be null, ie. when the plane does not
+      // intersect the volume
+      if(!imgData)
+        return;
+
       //var canvas = document.createElement("canvas");
       var canvas = document.getElementById(canvasName);
       var context = canvas.getContext("2d");

@@ -3,20 +3,20 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-    <script src="js/pako.js"></script>
-    <script src="js/hdf5_tools.js"></script>
-    <script src="js/hdf5_reader.js"></script>
-    <script src="js/minc_reader.js"></script>
+    <!-- MincReaderJS -->
+    <script src="js/MincReaderJS/js-lib/pako.js"></script>
+    <script src="js/MincReaderJS/js/hdf5_tools.js"></script>
+    <script src="js/MincReaderJS/js/hdf5_reader.js"></script>
+    <script src="js/MincReaderJS/js/minc_reader.js"></script>
+    <script src="js/MincReaderJS/js/VectorTools.js"></script>
+    <script src="js/MincReaderJS/js/Plane.js"></script>
+    <script src="js/MincReaderJS/js/ObliqueSampler.js"></script>
 
-    <script src="js/VectorTools.js"></script>
-    <script src="js/Plane.js"></script>
-    <script src="js/ObliqueSampler.js"></script>
-
-
-    <script src="js-lib/dat.gui.min.js"></script>
-    <script src="js-lib/three.js"></script>
-    <script src="js-lib/OrbitControls.js"></script>
-    <script src="js/VolumeNavigator.js"></script>
+    <!-- VolumeNavigator -->
+    <script src="js/VolumeNavigator/js-lib/dat.gui.min.js"></script>
+    <script src="js/VolumeNavigator/js-lib/three.js"></script>
+    <script src="js/VolumeNavigator/js-lib/OrbitControls.js"></script>
+    <script src="js/VolumeNavigator/js/VolumeNavigator.js"></script>
 
 
     <style>
@@ -159,10 +159,8 @@
       var canvas = document.getElementById(canvasName);
       var context = canvas.getContext("2d");
 
-
       canvas.width = imgData.width;
       canvas.height = imgData.height;
-
 
       context.fillStyle = "#00ff00";
       context.fillRect(0, 0, canvas.width, canvas.height);

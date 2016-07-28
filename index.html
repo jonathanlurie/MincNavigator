@@ -29,16 +29,44 @@
 
         #navigatorDiv{
             background-color: #FFF;
-            width: 600px;
-            height: 600px;
+            width: 800px;
+            height: 800px;
         }
+
 
         #sliceCanvas{
 
-          width: 600px;
-          height: 600px;
+          width: 700px;
+          height: 700px;
 
         }
+
+
+
+
+        .dg select{
+  /*
+  border: none;
+  */
+  color: #FFF;
+
+  border: 1px solid #111;
+  outline: 0px;
+  background: transparent;
+  width: 220px;
+  padding: 0px 0px 0px 0px;
+  font-size: 13px;
+  border: 1px solid #333;
+  height: 19px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url(arrow.png) 96% / 10% no-repeat;
+}
+
+.dg select:focus {
+  outline: none;
+}
 
     </style>
 
@@ -60,6 +88,23 @@
     var obliqueSampler = null;
     var volumeNav = null;
 
+    /*
+    function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+          x: evt.clientX - rect.left,
+          y: evt.clientY - rect.top
+        };
+      }
+      var canvas = document.getElementById('sliceCanvas');
+      var context = canvas.getContext('2d');
+
+      canvas.addEventListener('mousemove', function(evt) {
+        var mousePos = getMousePos(canvas, evt);
+        var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
+        console.log(message);
+      }, false);
+      */
 
     function openHdf5(buffer){
         mincVolume = readMincBuffer(buffer);
@@ -107,26 +152,36 @@
 
       // optional: this callback is called when a slider is released (mouse up)
       volumeNav.setOnFinishChangeCallback(loadFullResSlice);
+
+      // optional: add a button at the bottom of dat.gui with its associated callback.
+      // originally for caching the current slice.
+      volumeNav.buildGuiButton("Cache current slice",cacheSlice);
+
+
     }
 
 
     function loadLowResSlice(){
+
       plane.makeFromOnePointAndNormalVector(
         volumeNav.getPlanePoint(),
         volumeNav.getPlaneNormal()
       );
 
+      obliqueSampler.setSamplingFactor(0.35);
       obliqueSampler.update();
 
-      //var t0 = performance.now();
-      obliqueSampler.setSamplingFactor(0.5);
+      var t0 = performance.now();
+
       obliqueSampler.startSampling(false);
-      //var t1 = performance.now();
-      //console.log("Call to startSampling took " + (t1 - t0) + " milliseconds.")
+      var t1 = performance.now();
+      //console.log("Sampling low res: " + (t1 - t0) + " ms.")
 
       var imageData = obliqueSampler.exportForCanvas(1);
       loadImageDataIntoCanvas(imageData, "sliceCanvas");
 
+
+      prepareVerticeForMapping();
     }
 
     function loadFullResSlice(){
@@ -136,17 +191,57 @@
         volumeNav.getPlaneNormal()
       );
 
+      obliqueSampler.setSamplingFactor(1);
       obliqueSampler.update();
 
       var t0 = performance.now();
-      obliqueSampler.setSamplingFactor(1);
+
       obliqueSampler.startSampling(false);
       var t1 = performance.now();
-      //console.log("Call to startSampling took " + (t1 - t0) + " milliseconds.")
+      //console.log("Sampling hi res: " + (t1 - t0) + " ms.")
 
       var imageData = obliqueSampler.exportForCanvas(1);
       loadImageDataIntoCanvas(imageData, "sliceCanvas");
+
+      prepareVerticeForMapping();
     }
+
+
+
+    function cacheSlice(){
+      obliqueSampler.cacheOblique();
+
+      var listOfCachedSlices = obliqueSampler.listCachedObliques();
+
+      volumeNav.buildGuiList(
+        "Restore cached slice",
+        listOfCachedSlices,
+
+        // behavior when a cached slice is selected from the drop-down menu
+        function(value){
+          // this object contains image data, width, height, plane normal v, plane point
+          var cachedObliqueObject = obliqueSampler.getCachedObliqueByIndex(value);
+
+          // retrieve the image data that is compatible with html5 canvas
+          var cachedSliceCanvasData = obliqueSampler.getCachedObliqueCanvasData(value, 1);
+
+          if(cachedSliceCanvasData){
+            console.log("normal from index cacheSlice");
+            console.log(cachedObliqueObject.planeNormalVector);
+            loadImageDataIntoCanvas(cachedSliceCanvasData, 'sliceCanvas');
+            //volumeNav.setPlaneNormal(cachedObliqueObject.planeNormalVector);
+            //volumeNav.setPlanePoint();
+
+            volumeNav.buildPlaneFromNormalAndPoint(
+              cachedObliqueObject.planeNormalVector,
+              cachedObliqueObject.planePoint
+            );
+          }
+
+        }
+      );
+    }
+
 
 
     function loadImageDataIntoCanvas(imgData, canvasName){
@@ -166,6 +261,87 @@
       context.fillRect(0, 0, canvas.width, canvas.height);
       context.putImageData(imgData, 0, 0);
     }
+
+
+
+
+
+  function prepareVerticeForMapping(){
+    console.log("prepareVerticeForMapping()");
+    var obliqueSmplerList = obliqueSampler.getVerticeMatchList();
+    console.log(obliqueSmplerList);
+
+    if(!obliqueSmplerList)
+      return;
+
+    var volNavList = volumeNav.getPlanePolygon();
+    var numOfVertice = volNavList.length;
+    // Note: obliqueSmplerList._3D is supposed to contain the same as volNavList
+    // but not in the same order. Though we cannot expect to compare (==) them
+    // to one another with a floating point precision. We'll have to use a
+    // root mean square as an indicator of "closeness".
+    // The goal being to reorder obliqueSmplerList so that its values are in the
+    // same order as in volNavList.
+
+    // the index of matchTable is the index of volNavList
+    // while the value is the index in obliqueSmplerList
+    var matchTable = [];
+
+    // This runs in O(n²), sorry about that... (hopefully this polygon has 6 vertice max)
+
+    // finding who is who
+    for(var ref=0; ref<numOfVertice; ref++){
+
+      var matchFound = 0;
+      var bestScore = 1000; //  the lowest wins
+
+      for(var challenger=0; challenger<numOfVertice; challenger++){
+
+        var currentScore =
+          Math.abs(volNavList[ref][0] - obliqueSmplerList[challenger]._3D[0]) +
+          Math.abs(volNavList[ref][1] - obliqueSmplerList[challenger]._3D[1]) +
+          Math.abs(volNavList[ref][2] - obliqueSmplerList[challenger]._3D[2]);
+
+        if(currentScore < bestScore){
+          bestScore = currentScore;
+          matchFound = challenger;
+        }
+      }
+      matchTable.push(matchFound);
+    }
+
+    // reordering the obliqueSmplerList
+    var new_obliqueSmplerList = [];
+    for(var v=0; v<numOfVertice; v++){
+      new_obliqueSmplerList.push( obliqueSmplerList[matchTable[v]] );
+    }
+
+    //console.log(matchTable);
+    console.log(obliqueSmplerList);
+    //console.log(volNavList);
+    console.log(new_obliqueSmplerList);
+
+    // the image is a square
+    var squareSide = obliqueSampler.getLargestSide();
+
+    // conversion from 2D image coordinate convention to ThreeJS texture coordinate conventions
+    // (1: origin is top-left in pixel dimensions. 2: origin is bottom left in percentage)
+    var textureCoords = []
+    for(var v=0; v<numOfVertice; v++){
+      var imageCoords = new_obliqueSmplerList[v]._2D;
+      var percentCoord = [
+        imageCoords[0] / squareSide,
+        1 - (imageCoords[1] / squareSide)
+      ];
+
+      textureCoords.push(percentCoord);
+    }
+
+    // sending the mapping coordinates
+    volumeNav.mapTextureFromCanvas("sliceCanvas", textureCoords);
+
+  }
+
 
 
 

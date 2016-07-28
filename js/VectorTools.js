@@ -31,6 +31,28 @@ VectorTools.prototype.crossProduct = function(v1, v2, normalize){
 
 
 /*
+  compute the dot product between v1 and v2.
+  Note: v1 and v2 must be normalize so that the dot product is also
+  the cosine of the angle between v1 and v2.
+*/
+VectorTools.prototype.dotProduct = function(v1, v2){
+  if(v1.length != v2.length){
+    console.log("ERROR: v1 and v2 must be the same size to compute a dot product");
+    return null;
+  }
+
+  var sum = 0;
+
+  for(var i=0; i<v1.length; i++){
+    sum += (v1[i]*v2[i]);
+  }
+
+  return sum;
+
+}
+
+
+/*
   Return a normalized vector from v (does not replace v).
   args:
     v: Array[3] - vector to normalize
@@ -72,6 +94,32 @@ VectorTools.prototype.affine3DFromVectorAndPoint = function(V, point){
 
 }
 
+
+/*
+  rotate the vector v using the rotation matrix m.
+  Args:
+    v: array - [x, y, z]
+    m: array[array] -
+        [[a, b, c],
+         [d, e, f],
+         [g, h, i]]
+
+  Return rotated vector:
+    [ax + by + cz,
+     dx + ey + fz,
+     gx + hy + iz]
+*/
+VectorTools.prototype.rotate = function(v, m){
+  var vRot = [
+    v[0]*m[0][0] + v[1]*m[0][1] + v[2]*m[0][2],
+    v[0]*m[1][0] + v[1]*m[1][1] + v[2]*m[1][2],
+    v[0]*m[2][0] + v[1]*m[2][1] + v[2]*m[2][2],
+  ];
+
+  console.log("HELLo");
+
+  return vRot;
+}
 
 // export as a module in case of use with nodejs
 if(typeof module !== 'undefined' && typeof module.exports !== 'undefined')

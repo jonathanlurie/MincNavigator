@@ -157,7 +157,6 @@
       // originally for caching the current slice.
       volumeNav.buildGuiButton("Cache current slice",cacheSlice);
 
-
     }
 
 
@@ -267,9 +266,7 @@
 
 
   function prepareVerticeForMapping(){
-    console.log("prepareVerticeForMapping()");
     var obliqueSmplerList = obliqueSampler.getVerticeMatchList();
-    console.log(obliqueSmplerList);
 
     if(!obliqueSmplerList)
       return;
@@ -315,11 +312,6 @@
     for(var v=0; v<numOfVertice; v++){
       new_obliqueSmplerList.push( obliqueSmplerList[matchTable[v]] );
     }
-
-    //console.log(matchTable);
-    console.log(obliqueSmplerList);
-    //console.log(volNavList);
-    console.log(new_obliqueSmplerList);
 
     // the image is a square
     var squareSide = obliqueSampler.getLargestSide();

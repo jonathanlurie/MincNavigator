@@ -10,6 +10,8 @@
     <script src="js/MincReaderJS/js/minc_reader.js"></script>
     <script src="js/MincReaderJS/js/VectorTools.js"></script>
     <script src="js/MincReaderJS/js/Plane.js"></script>
+    <script src="js/MincReaderJS/js/CachedOblique.js"></script>
+    <script src="js/MincReaderJS/js/CachedObliqueCollection.js"></script>
     <script src="js/MincReaderJS/js/ObliqueSampler.js"></script>
 
     <!-- VolumeNavigator -->
@@ -29,44 +31,58 @@
 
         #navigatorDiv{
             background-color: #FFF;
-            width: 800px;
-            height: 800px;
+            width: 500px;
+            height: 500px;
         }
 
+        .brainSlice{
+          width: 450px;
+          height: 450px;
+        }
 
         #sliceCanvas{
-
-          width: 700px;
-          height: 700px;
-
+          border-width: 4px;
+          border-style: solid;
+          border-color: #0088ff;
+          margin-right: 5px;
         }
 
+        #sliceOrthoUCanvas{
+          border-width: 4px;
+          border-style: solid;
+          border-color: #00ff55;
+          margin-right: 5px;
+        }
 
+        #sliceOrthoVCanvas{
+          border-width: 4px;
+          border-style: solid;
+          border-color: #ff3333;
+        }
 
+      .dg select{
+        /*
+        border: none;
+        */
+        color: #FFF;
 
-        .dg select{
-  /*
-  border: none;
-  */
-  color: #FFF;
+        border: 1px solid #111;
+        outline: 0px;
+        background: transparent;
+        width: 220px;
+        padding: 0px 0px 0px 0px;
+        font-size: 13px;
+        border: 1px solid #333;
+        height: 19px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background: url(arrow.png) 96% / 10% no-repeat;
+      }
 
-  border: 1px solid #111;
-  outline: 0px;
-  background: transparent;
-  width: 220px;
-  padding: 0px 0px 0px 0px;
-  font-size: 13px;
-  border: 1px solid #333;
-  height: 19px;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background: url(arrow.png) 96% / 10% no-repeat;
-}
-
-.dg select:focus {
-  outline: none;
-}
+      .dg select:focus {
+        outline: none;
+      }
 
     </style>
 
@@ -78,34 +94,28 @@
     </p>
 
     <div style="display: flex;">
+
       <div id="navigatorDiv"></div>
-      <canvas id="sliceCanvas"></canvas>
+      <canvas id="sliceCanvas" class="brainSlice"></canvas>
+      <canvas id="sliceOrthoUCanvas" class="brainSlice"></canvas>
+      <canvas id="sliceOrthoVCanvas" class="brainSlice"></canvas>
     </div>
 
     <script>
     var mincVolume = null;
     var plane = new Plane();
+    var planeOrthoU = new Plane();
+    var planeOrthoV = new Plane();
     var obliqueSampler = null;
+    var obliqueSamplerOrthoU = null;
+    var obliqueSamplerOrthoV = null;
     var volumeNav = null;
+    var cachedObliqueCollection = new CachedObliqueCollection();
+
 
     /*
-    function getMousePos(canvas, evt) {
-        var rect = canvas.getBoundingClientRect();
-        return {
-          x: evt.clientX - rect.left,
-          y: evt.clientY - rect.top
-        };
-      }
-      var canvas = document.getElementById('sliceCanvas');
-      var context = canvas.getContext('2d');
-
-      canvas.addEventListener('mousemove', function(evt) {
-        var mousePos = getMousePos(canvas, evt);
-        var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
-        console.log(message);
-      }, false);
-      */
-
+      the buffer is supposed to be an hdf5
+    */
     function openHdf5(buffer){
         mincVolume = readMincBuffer(buffer);
         console.log("Minc volume loaded.");
@@ -114,7 +124,15 @@
         obliqueSampler = new ObliqueSampler(mincVolume, plane);
         obliqueSampler.update();
 
+        obliqueSamplerOrthoU = new ObliqueSampler(mincVolume, planeOrthoU);
+        obliqueSamplerOrthoU.update();
+
+        obliqueSamplerOrthoV = new ObliqueSampler(mincVolume, planeOrthoV);
+        obliqueSamplerOrthoV.update();
+
         initVolumeNavigator();
+
+        findOptimalPreviewSamplingFactor();
 
         // load the first image
         // (otherwise the user would have to play with slider to show the first image)
@@ -122,10 +140,20 @@
     }
 
 
+    // find the optimal subsampling factor for preview
+    function findOptimalPreviewSamplingFactor(){
+      plane.makeFromOnePointAndNormalVector(
+        volumeNav.getPlanePoint(),
+        volumeNav.getPlaneNormal()
+      );
+      obliqueSampler.findOptimalPreviewFactor();
+    }
+
+
     function initVolumeNavigator(){
 
       var dimensionInfo = mincVolume.getDimensionInfo();
-      var innerBoxInfo = mincVolume.getDataInnerBox();
+      //var innerBoxInfo = mincVolume.getDataInnerBox();
 
       // the outer box size
       var outerBoxOptions = {
@@ -134,18 +162,8 @@
           zSize: dimensionInfo[2].space_length
       }
 
-      // the inner box
-      var innerBoxOptions = {
-          xSize: innerBoxInfo[0].end - innerBoxInfo[0].start,
-          ySize: innerBoxInfo[1].end - innerBoxInfo[1].start,
-          zSize: innerBoxInfo[2].end - innerBoxInfo[2].start,
-          xOrigin: innerBoxInfo[0].start,
-          yOrigin: innerBoxInfo[1].start,
-          zOrigin: innerBoxInfo[2].start
-      }
-
       // creating a VolumeNavigator instance
-      volumeNav = new VolumeNavigator(outerBoxOptions, innerBoxOptions, "navigatorDiv");
+      volumeNav = new VolumeNavigator(outerBoxOptions, null, "navigatorDiv");
 
       // optional: this callback is called when a slider is moving (mouse down)
       volumeNav.setOnChangeCallback(loadLowResSlice);
@@ -156,10 +174,12 @@
       // optional: add a button at the bottom of dat.gui with its associated callback.
       // originally for caching the current slice.
       volumeNav.buildGuiButton("Cache current slice",cacheSlice);
-
     }
 
 
+    /*
+      Load a subsampled slice into the canvas
+    */
     function loadLowResSlice(){
 
       plane.makeFromOnePointAndNormalVector(
@@ -167,11 +187,10 @@
         volumeNav.getPlaneNormal()
       );
 
-      obliqueSampler.setSamplingFactor(0.35);
+      obliqueSampler.setSamplingFactorAutoFast(); //
       obliqueSampler.update();
 
       var t0 = performance.now();
-
       obliqueSampler.startSampling(false);
       var t1 = performance.now();
       //console.log("Sampling low res: " + (t1 - t0) + " ms.")
@@ -179,10 +198,15 @@
       var imageData = obliqueSampler.exportForCanvas(1);
       loadImageDataIntoCanvas(imageData, "sliceCanvas");
 
-
-      prepareVerticeForMapping();
+      prepareVerticeForMapping(
+        obliqueSampler.getVerticeMatchList()
+      );
     }
 
+
+    /*
+      Load a full resolution slice into the canvas
+    */
     function loadFullResSlice(){
 
       plane.makeFromOnePointAndNormalVector(
@@ -202,47 +226,110 @@
       var imageData = obliqueSampler.exportForCanvas(1);
       loadImageDataIntoCanvas(imageData, "sliceCanvas");
 
-      prepareVerticeForMapping();
+      prepareVerticeForMapping(
+        obliqueSampler.getVerticeMatchList()
+      );
+
+      loadFullResOrthoUSlice();
+      loadFullResOrthoVSlice();
     }
 
 
 
+    function loadFullResOrthoUSlice(){
+      planeOrthoU.makeFromOnePointAndNormalVector(
+        volumeNav.getPlanePoint(),
+        volumeNav.getGimbalNormalVectorArr(1)
+      );
+
+      console.log(volumeNav.getGimbalNormalVectorArr(1));
+
+      obliqueSamplerOrthoU.setSamplingFactor(1);
+      obliqueSamplerOrthoU.update();
+
+      obliqueSamplerOrthoU.startSampling(false);
+
+      var imageData = obliqueSamplerOrthoU.exportForCanvas(1);
+      loadImageDataIntoCanvas(imageData, "sliceOrthoUCanvas");
+    }
+
+
+
+    function loadFullResOrthoVSlice(){
+      planeOrthoV.makeFromOnePointAndNormalVector(
+        volumeNav.getPlanePoint(),
+        volumeNav.getGimbalNormalVectorArr(0)
+      );
+
+      obliqueSamplerOrthoV.setSamplingFactor(1);
+      obliqueSamplerOrthoV.update();
+
+      obliqueSamplerOrthoV.startSampling(false);
+
+      var imageData = obliqueSamplerOrthoV.exportForCanvas(1);
+      loadImageDataIntoCanvas(imageData, "sliceOrthoVCanvas");
+    }
+
+
+    /*
+      Callback of the gui button. It caches a slice
+    */
     function cacheSlice(){
-      obliqueSampler.cacheOblique();
+      var cachedOblique = obliqueSampler.generateCachedOblique();
 
-      var listOfCachedSlices = obliqueSampler.listCachedObliques();
+      // setting the quaternion from the gimbal to the cachedOblique instance
+      var q = volumeNav.getGimbalQuaternion();
+      cachedOblique.setQuaternion(q.x, q.y, q.z, q.w);
 
+      // add a cached slice to the collection
+      cachedObliqueCollection.addOblique( cachedOblique );
+
+      // update the list name on gui
+      var cachedObliqueNames = cachedObliqueCollection.getObliqueNameList();
       volumeNav.buildGuiList(
         "Restore cached slice",
-        listOfCachedSlices,
-
-        // behavior when a cached slice is selected from the drop-down menu
-        function(value){
-          // this object contains image data, width, height, plane normal v, plane point
-          var cachedObliqueObject = obliqueSampler.getCachedObliqueByIndex(value);
-
-          // retrieve the image data that is compatible with html5 canvas
-          var cachedSliceCanvasData = obliqueSampler.getCachedObliqueCanvasData(value, 1);
-
-          if(cachedSliceCanvasData){
-            console.log("normal from index cacheSlice");
-            console.log(cachedObliqueObject.planeNormalVector);
-            loadImageDataIntoCanvas(cachedSliceCanvasData, 'sliceCanvas');
-            //volumeNav.setPlaneNormal(cachedObliqueObject.planeNormalVector);
-            //volumeNav.setPlanePoint();
-
-            volumeNav.buildPlaneFromNormalAndPoint(
-              cachedObliqueObject.planeNormalVector,
-              cachedObliqueObject.planePoint
-            );
-          }
-
-        }
+        cachedObliqueNames,
+        loadCachedOblique
       );
     }
 
 
+    /*
+      Callbeck when a cached slice is selected from the gui drop-down menu
+    */
+    function loadCachedOblique(index){
 
+      var cachedOblique = cachedObliqueCollection.getOblique(index);
+      // if we want to set the factor manually, it's here
+      //cachedOblique.setBitDepthFactor(256);
+      var cachedObliqueCanvasData = cachedOblique.getCanvasData();
+
+      if(cachedObliqueCanvasData){
+        // loading the cached image into the canvas
+        loadImageDataIntoCanvas(cachedObliqueCanvasData, 'sliceCanvas');
+
+        var q = cachedOblique.getQuaternion();
+        volumeNav.setGimbalQuaternionElem(q.x, q.y, q.z, q.w);
+        //volumeNav.setGimbalQuaternion(cachedOblique.q);
+
+        // Adjusting the gimbal point
+        volumeNav.setPlanePoint(
+          cachedOblique.getPlane().getPoint()
+        );
+
+        // mapping the cached image on the 3D polygon
+        prepareVerticeForMapping(
+          cachedOblique.getVerticeMatchList()
+        );
+      }
+
+    }
+
+
+    /*
+      Loads the content of an array (most likely a uint8bitClamped) into
+      a specific canvas>
+    */
     function loadImageDataIntoCanvas(imgData, canvasName){
       // the imgData could be null, ie. when the plane does not
       // intersect the volume
@@ -265,8 +352,8 @@
 
 
 
-  function prepareVerticeForMapping(){
-    var obliqueSmplerList = obliqueSampler.getVerticeMatchList();
+  function prepareVerticeForMapping(obliqueSmplerList){
+    //var obliqueSmplerList = obliqueSampler.getVerticeMatchList();
 
     if(!obliqueSmplerList)
       return;
@@ -337,7 +424,9 @@
 
 
 
-
+    /*
+      Callback at file opening
+    */
     function handleFileSelect(evt) {
         var files = evt.target.files; // FileList object
 
@@ -352,13 +441,10 @@
 
             reader.onerror = function() {
                 var error_message = "error reading file: " + filename;
-
-                BrainBrowser.events.triggerEvent("error", { message: error_message });
                 throw new Error(error_message);
             };
 
             reader.readAsArrayBuffer(files[i]);
-
         }
     }
 

@@ -24,22 +24,94 @@
     <script src="js/MincNavigator.js"></script>
 
     <!-- Because style matters... -->
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" href="css/layout.css" />
 
 </head>
 <body>
 
-    <p>
-      <input type="file" id="myFile">
-    </p>
 
-    <div id="navigatorDiv"></div>
 
-    <div style="display: flex;">
-      <canvas id="ObliqueMain_canvas" class="brainSlice"></canvas>
-      <canvas id="ObliqueOrthoU_canvas" class="brainSlice"></canvas>
-      <canvas id="ObliqueOrthoV_canvas" class="brainSlice"></canvas>
+
+
+
+
+
+    <div id="content">
+      <div id="sideBar">
+        <p>
+          <input type="file" id="myFile">
+        </p>
+      </div>
+
+
+      <div id="mainView">
+
+
+
+        <!-- The north west div -->
+        <div id="nw" class="gridCell">
+          <canvas id="ObliqueMain_canvas" class="brainSlice"></canvas>
+        </div>
+
+        <!-- The north east div -->
+        <div id="ne" class="gridCell">
+          <div id="navigatorDiv"></div>
+        </div>
+
+
+
+
+        <!-- The south west div -->
+        <div id="sw" class="gridCell">
+          <canvas id="ObliqueOrthoU_canvas" class="brainSlice"></canvas>
+        </div>
+
+        <!-- The south east div -->
+        <div id="se" class="gridCell">
+          <canvas id="ObliqueOrthoV_canvas" class="brainSlice"></canvas>
+        </div>
+
+        </div>
+
+
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <script>
 

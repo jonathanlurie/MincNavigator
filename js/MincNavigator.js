@@ -135,6 +135,7 @@ MincNavigator.prototype.addSliceEngine = function(name, mapping3D){
 
   this._sliceEngines[name] = sliceEngine;
 
+
 }
 
 

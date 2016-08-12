@@ -3,6 +3,8 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
+    <!--<script src="https://code.jquery.com/jquery-3.1.0.js"></script>-->
+
     <!-- Dependency: MincReaderJS -->
     <script src="js-lib/MincReaderJS/js-lib/pako.js"></script>
     <script src="js-lib/MincReaderJS/js/hdf5_tools.js"></script>
@@ -22,6 +24,11 @@
 
     <!-- Project: MincNavigator -->
     <script src="js/MincNavigator.js"></script>
+
+    <!-- Project: Scroller -->
+    <script src="js-lib/scroller/Scroller.js"></script>
+
+
 
     <!-- Because style matters... -->
     <link rel="stylesheet" type="text/css" href="css/layout.css" />
@@ -115,46 +122,60 @@
 
     <script>
 
-    /*
-      the buffer is supposed to be an hdf5
-    */
-    function openMinc2(buffer){
-        var mincNavigator = new MincNavigator(buffer);
-    }
 
 
-    /*
-      Callback at file opening
-    */
-    function handleFileSelect(evt) {
-        var files = evt.target.files; // FileList object
+      /*
+        the buffer is supposed to be an hdf5
+      */
+      function openMinc2(buffer){
+          var mincNavigator = new MincNavigator(buffer);
+      }
 
-        // if a file is in the list, open it (only the first)
-        if(files.length){
-          var reader = new FileReader();
 
-          reader.onloadend = function(event) {
-              var result = event.target.result;
-              openMinc2(result);
+      /*
+        Callback at file opening
+      */
+      function handleFileSelect(evt) {
+          var files = evt.target.files; // FileList object
+
+          // if a file is in the list, open it (only the first)
+          if(files.length){
+            var reader = new FileReader();
+
+            reader.onloadend = function(event) {
+                var result = event.target.result;
+                openMinc2(result);
+            }
+
+            reader.onerror = function() {
+                var error_message = "error reading file: " + filename;
+                throw new Error(error_message);
+            };
+
+            reader.readAsArrayBuffer(files[0]);
           }
-
-          reader.onerror = function() {
-              var error_message = "error reading file: " + filename;
-              throw new Error(error_message);
-          };
-
-          reader.readAsArrayBuffer(files[0]);
-        }
-    }
+      }
 
 
-    // Check for the various File API support.
-    if (window.File && window.FileReader && window.FileList && window.Blob) {
-        // Great success! All the File APIs are supported.
-        document.getElementById('myFile').addEventListener('change', handleFileSelect, false);
-    } else {
-        console.log('The File APIs are not fully supported in this browser.');
-    }
+      // Check for the various File API support.
+      if (window.File && window.FileReader && window.FileList && window.Blob) {
+          // Great success! All the File APIs are supported.
+          document.getElementById('myFile').addEventListener('change', handleFileSelect, false);
+      } else {
+          console.log('The File APIs are not fully supported in this browser.');
+      }
+
+
+
+
+
+
+      // zooming on a canvas
+      // view-source:http://phrogz.net/tmp/canvas_zoom_to_cursor.html
+      // ou
+      // http://stackoverflow.com/questions/5189968/zoom-canvas-to-mouse-cursor/5526721#5526721
+
+
 
     </script>
 

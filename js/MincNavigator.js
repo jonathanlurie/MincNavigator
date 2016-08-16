@@ -86,14 +86,236 @@ MincNavigator.prototype.initVolumeNavigator = function(){
   );
 
   // optional: this callback is called when a slider is moving (mouse down)
-  this._volumeNavigator.setOnChangeCallback(this.onChangeCallback.bind(this));
+  //this._volumeNavigator.setOnChangeCallback(this.onChangeCallback.bind(this));
 
   // optional: this callback is called when a slider is released (mouse up)
-  this._volumeNavigator.setOnFinishChangeCallback(this.onChangeDoneCallback.bind(this));
+  //this._volumeNavigator.setOnFinishChangeCallback(this.onChangeDoneCallback.bind(this));
 
   // optional: add a button at the bottom of dat.gui with its associated callback.
   // originally for caching the current slice.
   //this._volumeNavigator.buildGuiButton("Cache current slice", cacheSlice);
+
+  /*
+    On the following part, we have a lot of events. Each of them matches
+    a specific usage of the gimbal, rotating, translating, moving, done moving,
+    all that conbined by "which axis?".
+  */
+
+  var that = this;
+
+  /**** CALLBACKS WHILE MOVING ****/
+
+  // when spining the x axis
+  this._volumeNavigator.setCallback("onOrbitingX", function(){
+    console.log("orbiting on X...");
+    // the main oblique
+    that.updateSliceEngine(
+      "ObliqueMain",
+      that._volumeNavigator.getPlaneNormal(),
+      that._volumeNavigator.getPlanePoint(),
+      false
+    );
+
+    // the ortho in U oblique
+    that.updateSliceEngine(
+      "ObliqueOrthoU",
+      that._volumeNavigator.getGimbalNormalVectorArr(1),
+      that._volumeNavigator.getPlanePoint(),
+      false
+    );
+
+    that.mapObliqueMain();
+
+  });
+
+  // when spining the y axis
+  this._volumeNavigator.setCallback("onOrbitingY", function(){
+    console.log("orbiting on Y...");
+
+    // the main oblique
+    that.updateSliceEngine(
+      "ObliqueMain",
+      that._volumeNavigator.getPlaneNormal(),
+      that._volumeNavigator.getPlanePoint(),
+      false
+    );
+
+    // the ortho in V oblique
+    that.updateSliceEngine(
+      "ObliqueOrthoV",
+      that._volumeNavigator.getGimbalNormalVectorArr(0),
+      that._volumeNavigator.getPlanePoint(),
+      false
+    );
+
+    that.mapObliqueMain();
+  });
+
+  // when spining the z axis
+  this._volumeNavigator.setCallback("onOrbitingZ", function(){
+    // the ortho in U oblique
+    that.updateSliceEngine(
+      "ObliqueOrthoU",
+      that._volumeNavigator.getGimbalNormalVectorArr(1),
+      that._volumeNavigator.getPlanePoint(),
+      false
+    );
+
+    // the ortho in V oblique
+    that.updateSliceEngine(
+      "ObliqueOrthoV",
+      that._volumeNavigator.getGimbalNormalVectorArr(0),
+      that._volumeNavigator.getPlanePoint(),
+      false
+    );
+
+    that.mapObliqueMain();
+  });
+
+  // when moving along normal
+  this._volumeNavigator.setCallback("onMovingAlongNormal", function(){
+    // the main oblique
+    that.updateSliceEngine(
+      "ObliqueMain",
+      that._volumeNavigator.getPlaneNormal(),
+      that._volumeNavigator.getPlanePoint(),
+      false
+    );
+
+    that.mapObliqueMain();
+  });
+
+  // when moving along the ortho plane U
+  this._volumeNavigator.setCallback("onMovingAlongOrthoU", function(){
+    // the ortho in U oblique
+    that.updateSliceEngine(
+      "ObliqueOrthoU",
+      that._volumeNavigator.getGimbalNormalVectorArr(1),
+      that._volumeNavigator.getPlanePoint(),
+      false
+    );
+
+    that.mapObliqueMain();
+  });
+
+  // when moving along the ortho plane V
+  this._volumeNavigator.setCallback("onMovingAlongOrthoV", function(){
+    // the ortho in V oblique
+    that.updateSliceEngine(
+      "ObliqueOrthoV",
+      that._volumeNavigator.getGimbalNormalVectorArr(0),
+      that._volumeNavigator.getPlanePoint(),
+      false
+    );
+
+    that.mapObliqueMain();
+  });
+
+
+  /**** CALLBACKS WHEN DONE MOVING ****/
+
+  // when spining the x axis
+  this._volumeNavigator.setCallback("onOrbitedX", function(){
+    // the main oblique
+    that.updateSliceEngine(
+      "ObliqueMain",
+      that._volumeNavigator.getPlaneNormal(),
+      that._volumeNavigator.getPlanePoint(),
+      true
+    );
+
+    // the ortho in U oblique
+    that.updateSliceEngine(
+      "ObliqueOrthoU",
+      that._volumeNavigator.getGimbalNormalVectorArr(1),
+      that._volumeNavigator.getPlanePoint(),
+      true
+    );
+
+    that.mapObliqueMain();
+  });
+
+  // when spining the y axis
+  this._volumeNavigator.setCallback("onOrbitedY", function(){
+    // the main oblique
+    that.updateSliceEngine(
+      "ObliqueMain",
+      that._volumeNavigator.getPlaneNormal(),
+      that._volumeNavigator.getPlanePoint(),
+      true
+    );
+
+    // the ortho in V oblique
+    that.updateSliceEngine(
+      "ObliqueOrthoV",
+      that._volumeNavigator.getGimbalNormalVectorArr(0),
+      that._volumeNavigator.getPlanePoint(),
+      true
+    );
+
+    that.mapObliqueMain();
+  });
+
+  // when spining the z axis
+  this._volumeNavigator.setCallback("onOrbitedZ", function(){
+    that.updateSliceEngine(
+      "ObliqueOrthoU",
+      that._volumeNavigator.getGimbalNormalVectorArr(1),
+      that._volumeNavigator.getPlanePoint(),
+      true
+    );
+
+    // the ortho in V oblique
+    that.updateSliceEngine(
+      "ObliqueOrthoV",
+      that._volumeNavigator.getGimbalNormalVectorArr(0),
+      that._volumeNavigator.getPlanePoint(),
+      true
+    );
+
+    that.mapObliqueMain();
+  });
+
+  // when moving along normal
+  this._volumeNavigator.setCallback("onMovedAlongNormal", function(){
+    // the main oblique
+    that.updateSliceEngine(
+      "ObliqueMain",
+      that._volumeNavigator.getPlaneNormal(),
+      that._volumeNavigator.getPlanePoint(),
+      true
+    );
+
+    that.mapObliqueMain();
+  });
+
+  // when moving along the ortho axis U
+  this._volumeNavigator.setCallback("onMovedAlongOrthoU", function(){
+    // the ortho in U oblique
+    that.updateSliceEngine(
+      "ObliqueOrthoU",
+      that._volumeNavigator.getGimbalNormalVectorArr(1),
+      that._volumeNavigator.getPlanePoint(),
+      true
+    );
+
+    that.mapObliqueMain();
+  });
+
+  // when moving along the ortho axis V
+  this._volumeNavigator.setCallback("onMovedAlongOrthoV", function(){
+    // the ortho in V oblique
+    that.updateSliceEngine(
+      "ObliqueOrthoV",
+      that._volumeNavigator.getGimbalNormalVectorArr(0),
+      that._volumeNavigator.getPlanePoint(),
+      true
+    );
+
+    that.mapObliqueMain();
+  });
+
+
 }
 
 
@@ -366,6 +588,11 @@ MincNavigator.prototype.updateFullResImages = function(){
 
 
 
+}
+
+
+MincNavigator.prototype.mapObliqueMain = function(){
+  this.prepareVerticeForMapping("ObliqueMain");
 }
 
 

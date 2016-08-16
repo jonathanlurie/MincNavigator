@@ -3,6 +3,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
+    <script src="https://code.jquery.com/jquery-3.1.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js" type="text/javascript"></script>
+
     <!-- Dependency: MincReaderJS -->
     <script src="js-lib/MincReaderJS/js-lib/pako.js"></script>
     <script src="js-lib/MincReaderJS/js/hdf5_tools.js"></script>
@@ -23,68 +26,56 @@
     <!-- Project: MincNavigator -->
     <script src="js/MincNavigator.js"></script>
 
+    <!-- Project: ui and little things -->
+    <script src="js/ui.js"></script>
+
     <!-- Because style matters... -->
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" href="css/layout.css" />
 
 </head>
 <body>
 
-    <p>
-      <input type="file" id="myFile">
-    </p>
 
-    <div id="navigatorDiv"></div>
 
-    <div style="display: flex;">
-      <canvas id="ObliqueMain_canvas" class="brainSlice"></canvas>
-      <canvas id="ObliqueOrthoU_canvas" class="brainSlice"></canvas>
-      <canvas id="ObliqueOrthoV_canvas" class="brainSlice"></canvas>
+
+
+
+
+
+    <div id="content">
+
+      <div id="sideBar">
+        <p>
+          <input type="file" id="myFile">
+        </p>
+      </div>
+
+      <!-- The main view contains the 4 split panels -->
+      <div id="mainView">
+
+        <!-- The north east div -->
+        <div id="ne" class="gridCell">
+          <div id="navigatorDiv"></div>
+        </div>
+
+        <!-- The north west div -->
+        <div id="nw" class="gridCell">
+          <canvas id="ObliqueMain_canvas" class="brainSlice"></canvas>
+        </div>
+
+        <!-- The south west div -->
+        <div id="sw" class="gridCell">
+          <canvas id="ObliqueOrthoU_canvas" class="brainSlice"></canvas>
+        </div>
+
+        <!-- The south east div -->
+        <div id="se" class="gridCell">
+          <canvas id="ObliqueOrthoV_canvas" class="brainSlice"></canvas>
+        </div>
+
+      </div>
+
     </div>
-
-    <script>
-
-    /*
-      the buffer is supposed to be an hdf5
-    */
-    function openMinc2(buffer){
-        var mincNavigator = new MincNavigator(buffer);
-    }
-
-
-    /*
-      Callback at file opening
-    */
-    function handleFileSelect(evt) {
-        var files = evt.target.files; // FileList object
-
-        // if a file is in the list, open it (only the first)
-        if(files.length){
-          var reader = new FileReader();
-
-          reader.onloadend = function(event) {
-              var result = event.target.result;
-              openMinc2(result);
-          }
-
-          reader.onerror = function() {
-              var error_message = "error reading file: " + filename;
-              throw new Error(error_message);
-          };
-
-          reader.readAsArrayBuffer(files[0]);
-        }
-    }
-
-
-    // Check for the various File API support.
-    if (window.File && window.FileReader && window.FileList && window.Blob) {
-        // Great success! All the File APIs are supported.
-        document.getElementById('myFile').addEventListener('change', handleFileSelect, false);
-    } else {
-        console.log('The File APIs are not fully supported in this browser.');
-    }
-
-    </script>
 
 </body>
 </html>

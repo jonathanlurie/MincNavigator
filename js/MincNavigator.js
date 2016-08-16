@@ -127,9 +127,17 @@ MincNavigator.prototype.addSliceEngine = function(name, mapping3D){
     plane: new Plane(),
     sampler: null, // init just afterwards
     canvasID: name + "_canvas",
-    mapping3D: mapping3D
+    mapping3D: mapping3D,
+    //boostedCanvas: null
   };
 
+  /*
+  // using the size of the parent div to fix the size of the canvas
+  var parentDiv = document.getElementById(sliceEngine.canvasID).parentNode;
+  var width = parentDiv.offsetWidth;
+  var height = parentDiv.offsetHeight;
+  sliceEngine.boostedCanvas = new BoostedCanvas(sliceEngine.canvasID, width, height);
+  */
   sliceEngine.sampler = new ObliqueSampler(this._mincVolume, sliceEngine.plane);
   sliceEngine.sampler.update();
 
@@ -198,7 +206,17 @@ MincNavigator.prototype.updateSliceEngine = function(name, normalVector, point, 
   sliceEngine.sampler.startSampling(false);
 
   var imageData = sliceEngine.sampler.exportForCanvas(this._bitDepthFactor);
+
+
+
   this.loadImageDataIntoCanvas(imageData, sliceEngine.canvasID);
+
+  /*
+  if(imageData){
+    sliceEngine.boostedCanvas.loadImageData(imageData);
+  }
+  */
+
 
   /*
   // TODO: make it more generic so that any slice could be mapped on its polygon,
@@ -212,10 +230,6 @@ MincNavigator.prototype.updateSliceEngine = function(name, normalVector, point, 
   */
 
 }
-
-
-
-
 
 
 /*

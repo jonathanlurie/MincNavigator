@@ -16,6 +16,10 @@
         Callback at file opening
       */
       function handleFileSelect(evt) {
+        // dealing with splashcreen
+        $(".splashcreen .splashContent .openfile").hide();
+        $(".splashcreen .splashContent .isLoading").show();
+
           var files = evt.target.files; // FileList object
 
           // if a file is in the list, open it (only the first)
@@ -202,5 +206,5 @@
 
         initObliqueControls();
 
-
+        $(".splashcreen").fadeOut();
       }

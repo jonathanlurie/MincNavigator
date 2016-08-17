@@ -30,6 +30,8 @@
     <script src="js/ui.js"></script>
 
     <!-- Because style matters... -->
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,900" rel="stylesheet">
+    <link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="css/layout.css" />
 
 </head>
@@ -45,9 +47,10 @@
     <div id="content">
 
       <div id="sideBar">
-        <p>
-          <input type="file" id="myFile">
-        </p>
+        <img id="sideBarLogo" src="images/logo.png"/>
+        <input type="file" id="fileOpener" class="hidden">
+        <div class="buttonBB noselect" onclick="document.getElementById('fileOpener').click()">Open file</div>
+        <div id="toggleGimbalBt" class="buttonBB noselect">Toggle gimbal</div>
       </div>
 
       <!-- The main view contains the 4 split panels -->
@@ -60,16 +63,37 @@
 
         <!-- The north west div -->
         <div id="nw" class="gridCell">
+          <div class="obliqueControls">
+            <div class="roundButton"><input type="text" value="1"></div>
+            <div class="roundButton arrowUp"><i class="fa fa-chevron-up" aria-hidden="true"></i>
+</div>
+            <div class="roundButton arrowDown"><i class="fa fa-chevron-down" aria-hidden="true"></i>
+</div>
+          </div>
           <canvas id="ObliqueMain_canvas" class="brainSlice"></canvas>
         </div>
 
         <!-- The south west div -->
         <div id="sw" class="gridCell">
+          <div class="obliqueControls">
+            <div class="roundButton"><input type="text" value="1"></div>
+            <div class="roundButton arrowUp"><i class="fa fa-chevron-up" aria-hidden="true"></i>
+</div>
+            <div class="roundButton arrowDown"><i class="fa fa-chevron-down" aria-hidden="true"></i>
+</div>
+          </div>
           <canvas id="ObliqueOrthoU_canvas" class="brainSlice"></canvas>
         </div>
 
         <!-- The south east div -->
         <div id="se" class="gridCell">
+          <div class="obliqueControls">
+            <div class="roundButton"><input type="text" value="1"></div>
+            <div class="roundButton arrowUp"><i class="fa fa-chevron-up" aria-hidden="true"></i>
+</div>
+            <div class="roundButton arrowDown"><i class="fa fa-chevron-down" aria-hidden="true"></i>
+</div>
+          </div>
           <canvas id="ObliqueOrthoV_canvas" class="brainSlice"></canvas>
         </div>
 

@@ -34,9 +34,16 @@ var MincNavigator = function(mincBuffer){
   this.navigatorDomName = "navigatorDiv";
 
   this.init();
-
 }
 
+
+/*
+  Returns the volumeNavigator instance.
+  BEWARE, do not overload stuff!
+*/
+MincNavigator.prototype.getVolumeNavigator = function(){
+  return this._volumeNavigator;
+}
 
 /*
   initialize few object and all the sliceEngines
@@ -48,10 +55,12 @@ MincNavigator.prototype.init = function(){
   this.addSliceEngine("ObliqueMain", true);
   this.addSliceEngine("ObliqueOrthoU", false);
   this.addSliceEngine("ObliqueOrthoV", false);
-
   this.findOptimalPreviewSamplingFactor();
-
   this.updateFullResImages();
+
+  // map the image at init
+  this._volumeNavigator.update();
+  this.mapObliqueMain();
 }
 
 
@@ -314,26 +323,6 @@ MincNavigator.prototype.initVolumeNavigator = function(){
 
     that.mapObliqueMain();
   });
-
-
-}
-
-
-
-/*
-  Callback sent to VolumeNavigator, when the cursor is moving (but not released)
-*/
-MincNavigator.prototype.onChangeCallback = function(){
-  this.updateLowResImages();
-}
-
-
-
-/*
-  Callback sent to VolumeNavigator, when the cursor is released
-*/
-MincNavigator.prototype.onChangeDoneCallback = function(){
-  this.updateFullResImages();
 }
 
 
@@ -362,9 +351,7 @@ MincNavigator.prototype.addSliceEngine = function(name, mapping3D){
   */
   sliceEngine.sampler = new ObliqueSampler(this._mincVolume, sliceEngine.plane);
   sliceEngine.sampler.update();
-
   this._sliceEngines[name] = sliceEngine;
-
 
 }
 
@@ -383,12 +370,8 @@ MincNavigator.prototype.findOptimalPreviewSamplingFactor = function(){
     this._volumeNavigator.getPlaneNormal()
   );
 
-
-
   sliceEngine.sampler.update();
-
   sliceEngine.sampler.findOptimalPreviewFactor();
-
   this._optimalSamplingFactor = sliceEngine.sampler.getOptimalPreviewSamplingFactor();
 }
 
@@ -429,16 +412,7 @@ MincNavigator.prototype.updateSliceEngine = function(name, normalVector, point, 
 
   var imageData = sliceEngine.sampler.exportForCanvas(this._bitDepthFactor);
 
-
-
   this.loadImageDataIntoCanvas(imageData, sliceEngine.canvasID);
-
-  /*
-  if(imageData){
-    sliceEngine.boostedCanvas.loadImageData(imageData);
-  }
-  */
-
 
   /*
   // TODO: make it more generic so that any slice could be mapped on its polygon,
@@ -477,7 +451,7 @@ MincNavigator.prototype.loadImageDataIntoCanvas = function(imgData, canvasID){
 
 
 /*
-  TODO
+
 */
 MincNavigator.prototype.prepareVerticeForMapping = function(name){
   var sliceEngine = this._sliceEngines[name]
@@ -546,12 +520,9 @@ MincNavigator.prototype.prepareVerticeForMapping = function(name){
     textureCoords.push(percentCoord);
   }
 
-  //console.log(textureCoords);
-
   // sending the mapping coordinates
   this._volumeNavigator.mapTextureFromCanvas(this._sliceEngines[name].canvasID, textureCoords);
 }
-
 
 
 /*
@@ -583,11 +554,7 @@ MincNavigator.prototype.updateFullResImages = function(){
     true
   );
 
-
   this.prepareVerticeForMapping("ObliqueMain");
-
-
-
 }
 
 

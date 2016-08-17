@@ -1,12 +1,13 @@
     //console.log = function() {};
     console.warn = function() {};
 
+    var mincNavigator = null;
 
       /*
         the buffer is supposed to be an hdf5
       */
       function openMinc2(buffer){
-          var mincNavigator = new MincNavigator(buffer);
+          mincNavigator = new MincNavigator(buffer);
           onFileLoaded();
       }
 
@@ -133,7 +134,7 @@
         // Check for the various File API support.
         if (window.File && window.FileReader && window.FileList && window.Blob) {
             // Great success! All the File APIs are supported.
-            document.getElementById('myFile').addEventListener('change', handleFileSelect, false);
+            document.getElementById('fileOpener').addEventListener('change', handleFileSelect, false);
         } else {
             console.log('The File APIs are not fully supported in this browser.');
         }
@@ -147,6 +148,43 @@
       }
 
 
+      function initObliqueControls(){
+        $("#nw .obliqueControls .arrowUp").click(function(){
+          var factor = parseFloat($("#nw .obliqueControls input").val());
+          mincNavigator.getVolumeNavigator().moveAlongNormal(factor);
+        });
+
+        $("#nw .obliqueControls .arrowDown").click(function(){
+          var factor = parseFloat($("#nw .obliqueControls input").val()) * -1;
+          mincNavigator.getVolumeNavigator().moveAlongNormal(factor);
+        });
+
+
+        $("#sw .obliqueControls .arrowUp").click(function(){
+          var factor = parseFloat($("#sw .obliqueControls input").val());
+          mincNavigator.getVolumeNavigator().moveAlongOrthoU(factor);
+        });
+
+        $("#sw .obliqueControls .arrowDown").click(function(){
+          var factor = parseFloat($("#sw .obliqueControls input").val()) * -1;
+          mincNavigator.getVolumeNavigator().moveAlongOrthoU(factor);
+        });
+
+
+        $("#se .obliqueControls .arrowUp").click(function(){
+          var factor = parseFloat($("#se .obliqueControls input").val());
+          mincNavigator.getVolumeNavigator().moveAlongOrthoV(factor);
+        });
+
+        $("#se .obliqueControls .arrowDown").click(function(){
+          var factor = parseFloat($("#se .obliqueControls input").val()) * -1;
+          mincNavigator.getVolumeNavigator().moveAlongOrthoV(factor);
+        });
+
+      }
+
+
+
       /*
         called when the file is loaded
       */
@@ -154,4 +192,15 @@
         centerCanvas($("#ObliqueMain_canvas"));
         centerCanvas($("#ObliqueOrthoU_canvas"));
         centerCanvas($("#ObliqueOrthoV_canvas"));
+
+        //mincNavigator.getVolumeNavigator().moveAlongNormal(0);
+        //
+        $("#toggleGimbalBt").click(function(){
+          mincNavigator.getVolumeNavigator().AxisArrowHelperToggle();
+        });
+
+
+        initObliqueControls();
+
+
       }

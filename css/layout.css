@@ -102,9 +102,50 @@ body{
 #sideBarLogo{
   width: 90%;
   margin-left: 5%;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.separator{
+  border: none;
+  border-top: 1px dashed hsla(196, 100%, 70%, 0.5);
+  
+  margin: 10px 0 10px 0;
 }
 
 
+.label{
+  padding: 5px;
+  text-align: center;
+  color: hsl(196, 100%, 40%);
+}
+
+
+.singleTextField{
+  width: calc(100% - 2*10px);
+  margin: 10px;
+}
+
+
+.threeTextFields{
+  margin: 10px;
+  margin-top: 0px;
+}
+
+
+.threeTextFields input{
+  width: 32%;
+  margin: 0px;
+}
+
+.commonTextField{
+  color: hsl(196, 100%, 45%);
+  padding: 5px;
+  margin-top: 0px;
+  box-sizing:border-box;
+  border: 1px solid hsl(196, 100%, 70%);
+  text-align: center;
+}
 
 .buttonBB{
   border: 1px solid hsl(196, 100%, 70%);

@@ -38,27 +38,60 @@
 <body>
 
 
-
+  <!--
   <div class="splashcreen">
     <div class="splashContent">
       <img class="logo" src="images/logo.png"/>
       <div class="buttonBB noselect openfile" onclick="document.getElementById('fileOpener').click()">Open file</div>
       <div class="isLoading" style="display: none;">File is loading...</div>
     </div>
-
   </div>
+  -->
 
 
 
 
     <div id="content">
 
+
+      <!-- Sidebar content -->
       <div id="sideBar">
         <img id="sideBarLogo" src="images/logo.png"/>
         <input type="file" id="fileOpener" class="hidden">
         <div class="buttonBB noselect" onclick="document.getElementById('fileOpener').click()">Open file</div>
         <div id="toggleGimbalBt" class="buttonBB noselect">Toggle gimbal</div>
+
+        <div class="separator"></div>
+
+        <div class="label">Center (x, y, z)</div>
+        <div class="threeTextFields">
+          <input id="centerX" type="text" class="commonTextField" value="0">
+          <input id="centerY" type="text" class="commonTextField" value="0">
+          <input id="centerZ" type="text" class="commonTextField" value="0">
+        </div>
+
+        <div class="label">Normal (x, y, z)</div>
+        <div class="threeTextFields">
+          <input id="normalX" type="text" class="commonTextField" value="0">
+          <input id="normalY" type="text" class="commonTextField" value="0">
+          <input id="normalZ" type="text" class="commonTextField" value="0">
+        </div>
+
+        <div id="updateGimbalBt" class="buttonBB noselect">Update</div>
+
+        <div class="separator"></div>
+
+        <!-- <input type="text" class="singleTextField commonTextField" value="hello"> -->
+
+
+
       </div>
+
+
+
+
+
+
 
       <!-- The main view contains the 4 split panels -->
       <div id="mainView">

@@ -1,5 +1,5 @@
     //console.log = function() {};
-    console.warn = function() {};
+    //console.warn = function() {};
 
     var mincNavigator = null;
 
@@ -114,15 +114,8 @@
       function centerCanvas(element){
         var parentWidth = element.parent().width();
         var parentHeight = element.parent().height();
-
         var elemWidth = element.width();
         var elemHeight = element.height();
-
-        console.log('parentWidth : ' + parentWidth);
-        console.log('parentHeight : ' + parentHeight);
-        console.log('elemWidth : ' + elemWidth);
-        console.log('elemHeight : ' + elemHeight);
-
         var offsetLeft = (elemWidth) / 2;
         var offssetTop = (elemHeight - parentHeight) / 2;
 
@@ -188,6 +181,42 @@
       }
 
 
+      /*
+        used as a callback when the gimbal changes position or orientation.
+        See MincNavigator.callbackReadGimbalInfo for more.
+      */
+      function displayGimbalInfo(center, normal){
+        $("#centerX").val(Math.round(center[0]*100) / 100);
+        $("#centerY").val(Math.round(center[1]*100) / 100);
+        $("#centerZ").val(Math.round(center[2]*100) / 100);
+
+        $("#normalX").val(Math.round(normal[0]*10000) / 10000);
+        $("#normalY").val(Math.round(normal[1]*10000) / 10000);
+        $("#normalZ").val(Math.round(normal[2]*10000) / 10000);
+      }
+
+
+
+      /*
+        Set the
+      */
+      function setGimbalInfo(){
+
+        console.log($("#normalX").val());
+
+        mincNavigator.setPlaneNormalAndPoint(
+          [
+            parseFloat($("#normalX").val()),
+            parseFloat($("#normalY").val()),
+            parseFloat($("#normalZ").val())
+          ],
+          [
+            parseFloat($("#centerX").val()),
+            parseFloat($("#centerY").val()),
+            parseFloat($("#centerZ").val())
+          ]
+        );
+      }
 
       /*
         called when the file is loaded
@@ -197,14 +226,27 @@
         centerCanvas($("#ObliqueOrthoU_canvas"));
         centerCanvas($("#ObliqueOrthoV_canvas"));
 
-        //mincNavigator.getVolumeNavigator().moveAlongNormal(0);
-        //
+        // Toggle gimbal button
         $("#toggleGimbalBt").click(function(){
           mincNavigator.getVolumeNavigator().AxisArrowHelperToggle();
         });
 
-
+        // the bubble buttons to chqnge slices
         initObliqueControls();
 
+        // wiring the red gimbal info callback
+        mincNavigator.setCallbackReadGimbalInfo(displayGimbalInfo);
+
+        // refresh some text fields
+        // (this is just about calling displayGimbalInfo here)
+        mincNavigator.sendGimbalInfo();
+
+
+        // Toggle gimbal button
+        $("#updateGimbalBt").click(function(){
+          setGimbalInfo();
+        });
+
+        // when everything is ready, we fade out the splashscreen to show the actuall app
         $(".splashcreen").fadeOut();
       }

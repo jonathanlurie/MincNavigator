@@ -33,6 +33,12 @@ var MincNavigator = function(mincBuffer){
   // list of DOM element names to place elements
   this.navigatorDomName = "navigatorDiv";
 
+  // a callback to set that will be called with 2 args:
+  //    gimbalCenter: Array - [x, y, z] coordinate of the center of the gimbal.
+  //    gimbalNormal: Array - [x, y, z] unit vector of the gimbal's reference normal vector (in Z)
+  // Info: both args are sliced hard copy of the orinal arrays - thus, just for reading.
+  this.callbackReadGimbalInfo = null;
+
   this.init();
 }
 
@@ -376,6 +382,22 @@ MincNavigator.prototype.findOptimalPreviewSamplingFactor = function(){
 }
 
 
+
+/*
+  call the previously defined callback to send the gimbal info
+*/
+MincNavigator.prototype.sendGimbalInfo = function(){
+  // if the callback is defined, we tell it what are the new setting of the gimbal
+  // (no matter which slice is concerned)
+  if(this.callbackReadGimbalInfo){
+    this.callbackReadGimbalInfo(
+      this._volumeNavigator.getPlanePoint().slice(),
+      this._volumeNavigator.getPlaneNormal().slice() // we are not using normal from args because it is all the time called with the reference normal.
+    );
+  }
+}
+
+
 /*
   Does the necessary to perform an oblique image using a normal vector
   and a point to create a plane. Then displays this image in the canvas.
@@ -388,13 +410,16 @@ MincNavigator.prototype.findOptimalPreviewSamplingFactor = function(){
 */
 MincNavigator.prototype.updateSliceEngine = function(name, normalVector, point, fullRes){
 
+  // the gimbal has just moved here, so we refresh whatever need to be refreshed
+  this.sendGimbalInfo();
+
+
   var sliceEngine = this._sliceEngines[name];
 
   // update the plane
   sliceEngine.plane.makeFromOnePointAndNormalVector(
     point,
     normalVector
-
   );
 
   if(fullRes){
@@ -578,4 +603,21 @@ MincNavigator.prototype.updateLowResImages = function(){
 
   this.prepareVerticeForMapping("ObliqueMain");
 
+}
+
+
+/*
+  Set the callback that will be called every time the gimbal will tilt
+  or translate.
+*/
+MincNavigator.prototype.setCallbackReadGimbalInfo = function(cb){
+  this.callbackReadGimbalInfo = cb;
+}
+
+
+/*
+
+*/
+MincNavigator.prototype.setPlaneNormalAndPoint = function(nomal, point){
+  this._volumeNavigator.setPlaneNormalAndPoint(nomal, point);
 }

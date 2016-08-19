@@ -99,6 +99,10 @@
             adjustLeft = left / zoomFactor;
             adjustTop = top/zoomFactor -  ((zoomFactor - 1) * parentHeight) / 2;
           }
+
+
+          element.attr("scale", scale);
+
           // adjust the top and left offset
           element.css("left" , adjustLeft + "px");
           element.css("top" , adjustTop + "px");
@@ -337,10 +341,58 @@
           saveRotation();
         });
 
-
-
         updateRestoreRotationMenu();
 
         // when everything is ready, we fade out the splashscreen to show the actuall app
         $(".splashcreen").fadeOut();
-      }
+
+
+
+
+        /*
+      // find the coordinates within a canvas
+
+      var canvas = document.getElementById('ObliqueOrthoU_canvas');
+      canvas.addEventListener('mousemove', function(evt) {
+
+
+        var scale = $('#ObliqueOrthoU_canvas').attr('scale');
+        if(typeof scale == "undefined")
+          scale = 1;
+
+        var rect = canvas.getBoundingClientRect();
+        var x = (evt.clientX - rect.left) / scale;
+        var y = (evt.clientY - rect.top) / scale;
+        // they are fromthe size of the div, not the canvas!
+        console.log(x + ' ' + y);
+
+      }, false);
+
+      */
+
+      //$('#ObliqueOrthoU_canvas').mousemove(function( evt ) {
+      $('#ObliqueOrthoU_canvas').on('mousemove', function( evt ) {
+        //console.log( $(evt.target).attr("scale"));
+        console.log( $(this).attr("scale"));
+
+        var scale = $(this).attr("scale");
+
+        // in case we never zoom/unzoom
+        if(typeof scale == "undefined")
+          scale = 1;
+
+        var originalH = parseFloat($(this).attr("height"));
+        var originalW = parseFloat($(this).attr("width"));
+
+        var rect = $(this).get(0).getBoundingClientRect();
+        //console.log($(this).parent().get(0).getBoundingClientRect());
+        console.log(rect);
+        var x = ((evt.clientX - rect.left) / rect.width) * originalW;
+        var y = ((evt.clientY - rect.top) / rect.height) * originalH;
+
+        console.log(x + ' ' + y);
+
+      });
+
+
+}

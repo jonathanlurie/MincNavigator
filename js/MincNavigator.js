@@ -616,8 +616,44 @@ MincNavigator.prototype.setCallbackReadGimbalInfo = function(cb){
 
 
 /*
-
+  Changes both point of the plane and plane normal.
 */
 MincNavigator.prototype.setPlaneNormalAndPoint = function(nomal, point){
   this._volumeNavigator.setPlaneNormalAndPoint(nomal, point);
+}
+
+
+/*
+  Ask volumeNav to save the current configuration.
+  Args:
+    name: String - has to be unique (or wont be saved)
+*/
+MincNavigator.prototype.saveGimbalOrientation = function(name){
+  this._volumeNavigator.saveQuaternion(name, false, null);
+}
+
+
+/*
+  Returns the list of names used as ID for saved quaternions/gimbal orientations
+*/
+MincNavigator.prototype.getGimbalOrientationNames = function(){
+  return this._volumeNavigator.getSavedQuaternionsNameList();
+}
+
+
+/*
+  Restore one of the saved gimbal configuration given its name.
+  Args:
+    name: String - unique identifier
+*/
+MincNavigator.prototype.restoreGimbalOrientation = function(name){
+  this._volumeNavigator.restoreQuaternion(name, true); // execute the callbacks
+}
+
+
+/*
+  asks volumeNav to rotate around a specifi axis
+*/
+MincNavigator.prototype.rotateDegree = function(angle, axis){
+  this._volumeNavigator.rotateDegreeAndUpdate(angle, axis); // execute the callbacks
 }

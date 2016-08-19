@@ -59,36 +59,65 @@
         <img id="sideBarLogo" src="images/logo.png"/>
         <input type="file" id="fileOpener" class="hidden">
         <div class="buttonBB noselect" onclick="document.getElementById('fileOpener').click()">Open file</div>
-        <div id="toggleGimbalBt" class="buttonBB noselect">Toggle gimbal</div>
+
+
 
         <div class="separator"></div>
+
 
         <div class="label">Center (x, y, z)</div>
         <div class="threeTextFields">
-          <input id="centerX" type="text" class="commonTextField" value="0">
-          <input id="centerY" type="text" class="commonTextField" value="0">
-          <input id="centerZ" type="text" class="commonTextField" value="0">
+          <input id="centerX" type="text" class="commonTextField" value="" autocomplete="off">
+          <input id="centerY" type="text" class="commonTextField" value="" autocomplete="off">
+          <input id="centerZ" type="text" class="commonTextField" value="" autocomplete="off">
         </div>
-
         <div class="label">Normal (x, y, z)</div>
         <div class="threeTextFields">
-          <input id="normalX" type="text" class="commonTextField" value="0">
-          <input id="normalY" type="text" class="commonTextField" value="0">
-          <input id="normalZ" type="text" class="commonTextField" value="0">
+          <input id="normalX" type="text" class="commonTextField" value="" autocomplete="off">
+          <input id="normalY" type="text" class="commonTextField" value="" autocomplete="off">
+          <input id="normalZ" type="text" class="commonTextField" value="" autocomplete="off">
         </div>
-
         <div id="updateGimbalBt" class="buttonBB noselect">Update</div>
+
 
         <div class="separator"></div>
 
+
+        <div class="label">Perform rotation</div>
+        <div class="twoElements">
+          <input id="angleToRotate" type="text" class="commonTextField" value="" placeholder="angle°" autocomplete="off">
+          <select id="axisToRotate" class="dropdownMenu" autocomplete="off">
+            <option value="0">x</option>
+            <option value="1">y</option>
+            <option value="2">z</option>
+          </select>
+        </div>
+        <div id="updateAngleBt" class="buttonBB noselect">Tilt</div>
+
+
+        <div class="separator"></div>
+
+
+        <div class="label">Save current rotation</div>
+        <input type="text" id="saveRotationLabel" class="singleTextField commonTextField" value="" placeholder="name" autocomplete="off">
+        <div id="saveRotationBt" class="buttonBB noselect">Save</div>
+
+        <div class="separator"></div>
+
+
+        <div class="label">Restore rotation</div>
+        <select id="restoreGimbalMenu" class="dropdownMenu" onchange="restoreRotation();" autocomplete="off">
+        </select>
+
+
+        <div class="separator"></div>
+
+        <div id="toggleGimbalBt" class="buttonBB noselect">Toggle gimbal</div>
         <!-- <input type="text" class="singleTextField commonTextField" value="hello"> -->
 
 
 
       </div>
-
-
-
 
 
 

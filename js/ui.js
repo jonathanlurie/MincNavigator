@@ -218,6 +218,88 @@
         );
       }
 
+
+      /*
+        Build the list of available rotation within the dropdown menu
+      */
+      function updateRestoreRotationMenu(){
+        $('#restoreGimbalMenu').empty();
+        var nameList = mincNavigator.getGimbalOrientationNames();
+
+        $('#restoreGimbalMenu')
+          .append(
+            $("<option></option>")
+              .attr("value", "none")
+              .text("none")
+          );
+
+        nameList.forEach(function(element){
+          console.log(element);
+          $('#restoreGimbalMenu')
+            .append(
+              $("<option></option>")
+                .attr("value",element)
+                .text(element)
+            );
+
+        });
+      }
+
+
+      /*
+        callback for a selecte rotation to restore
+      */
+      function restoreRotation(){
+        var rotationID = $("#restoreGimbalMenu option:selected").text();
+
+        if(rotationID == "none")
+          return;
+
+        mincNavigator.restoreGimbalOrientation(rotationID);
+
+        // get back to defaut so that _original_ is selectable again
+        $("#restoreGimbalMenu").val("none");
+      }
+
+
+      /*
+
+      */
+      function saveRotation(){
+        var name = $("#saveRotationLabel").val();
+
+        if(!name){
+          $("#saveRotationLabel").attr("placeholder", "Name is mandatory!")
+        }else{
+
+          mincNavigator.saveGimbalOrientation(name);
+          updateRestoreRotationMenu();
+          $("#saveRotationLabel").val('');
+          $("#saveRotationLabel").attr("placeholder", name + " saved!");
+
+          setTimeout(function(){
+            $("#saveRotationLabel").attr("placeholder", "name");
+          }, 1500);
+
+        }
+
+
+      }
+
+
+      function rotateWithAngle(){
+        var angle = parseFloat($("#angleToRotate").val());
+        var axis = $("#axisToRotate option:selected").attr("value");
+
+        if(Number.isNaN(angle)){
+          $("#angleToRotate").val("");
+          return;
+        }
+
+        mincNavigator.rotateDegree(angle, axis);
+      }
+
+
       /*
         called when the file is loaded
       */
@@ -242,10 +324,22 @@
         mincNavigator.sendGimbalInfo();
 
 
-        // Toggle gimbal button
+        // update gimbal button
         $("#updateGimbalBt").click(function(){
           setGimbalInfo();
         });
+
+        $("#updateAngleBt").click(function(){
+          rotateWithAngle();
+        });
+
+        $("#saveRotationBt").click(function(){
+          saveRotation();
+        });
+
+
+
+        updateRestoreRotationMenu();
 
         // when everything is ready, we fade out the splashscreen to show the actuall app
         $(".splashcreen").fadeOut();

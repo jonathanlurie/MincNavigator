@@ -39,6 +39,8 @@ var MincNavigator = function(mincBuffer){
   // Info: both args are sliced hard copy of the orinal arrays - thus, just for reading.
   this.callbackReadGimbalInfo = null;
 
+  this.twoPointsSection = [null, null];
+
   this.init();
 }
 
@@ -667,4 +669,29 @@ MincNavigator.prototype.tiltGimbalU = function(){
 
 MincNavigator.prototype.tiltGimbalV = function(){
   this._volumeNavigator.tiltGimbalV();
+}
+
+
+
+
+MincNavigator.prototype.twoPointsSectionSetP1 = function(){
+  this.twoPointsSection[0] = this._volumeNavigator.getGimbalCenter();
+}
+
+
+MincNavigator.prototype.twoPointsSectionSetP2 = function(){
+  this.twoPointsSection[1] = this._volumeNavigator.getGimbalCenter();
+}
+
+
+MincNavigator.prototype.updateTwoPointsSection = function(){
+  this._volumeNavigator.planeFromTwoPoints(
+    this.twoPointsSection[0],
+    this.twoPointsSection[1]
+  );
+}
+
+
+MincNavigator.prototype.resetPointsSection = function(){
+  this.twoPointsSection = [null, null];
 }

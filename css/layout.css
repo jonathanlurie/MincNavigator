@@ -108,10 +108,10 @@ body{
   margin-bottom: 20px;
 }
 
+
 .separator{
   border: none;
-  border-top: 1px dashed hsla(196, 100%, 70%, 0.5);
-
+  border-top: 1px dashed hsla(196, 100%, 70%, 1);
   margin: 10px 0 10px 0;
 }
 
@@ -148,10 +148,29 @@ body{
 }
 
 .twoElements input,
-.twoElements select
+.twoElements select,
+.twoElements .buttonBB
 {
   width: 49%;
   margin: 0px;
+}
+
+.twoButtons{
+  display: flex;
+  margin:10px;
+}
+
+.twoButtons .buttonBB{
+  margin:0;
+  width: 45%;
+}
+
+.twoButtons :nth-child(1){
+  margin-right: 5px;
+}
+
+.twoButtons :nth-child(2){
+  margin-left: 5px;
 }
 
 .commonTextField{

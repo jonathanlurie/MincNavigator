@@ -1,5 +1,5 @@
     //console.log = function() {};
-    //console.warn = function() {};
+    console.warn = function() {};
 
     var mincNavigator = null;
 
@@ -310,6 +310,30 @@
       }
 
 
+
+      function setCallbackACPCSection(){
+
+        $("#acpcAcBt").click(function(){
+          mincNavigator.twoPointsSectionSetP1();
+        });
+
+        $("#acpcPcBt").click(function(){
+          mincNavigator.twoPointsSectionSetP2();
+        });
+
+        $("#resetAcpcBt").click(function(){
+          mincNavigator.resetPointsSection();
+        });
+
+        $("#updateAcpcBt").click(function(){
+          mincNavigator.updateTwoPointsSection();
+        });
+
+
+      }
+
+
+
       /*
         called when the file is loaded
       */
@@ -347,8 +371,12 @@
           saveRotation();
         });
 
+        // two point section: AC
+        $("#acpcAcBt").click(function(){
 
+        });
 
+        setCallbackACPCSection();
 
         updateRestoreRotationMenu();
 

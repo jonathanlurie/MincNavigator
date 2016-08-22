@@ -182,6 +182,15 @@
           mincNavigator.getVolumeNavigator().moveAlongOrthoV(factor);
         });
 
+        // bubble button over canvas
+        $("#switchOrthoU").click(function(){
+          mincNavigator.tiltGimbalU();
+        });
+
+        $("#switchOrthoV").click(function(){
+          mincNavigator.tiltGimbalV();
+        });
+
       }
 
 
@@ -202,7 +211,7 @@
 
 
       /*
-        Set the
+        Ask the gimbal to take this center+normal vector.
       */
       function setGimbalInfo(){
 
@@ -259,7 +268,7 @@
         if(rotationID == "none")
           return;
 
-        mincNavigator.restoreGimbalOrientation(rotationID);
+        mincNavigator.restoreGimbalSettings(rotationID);
 
         // get back to defaut so that _original_ is selectable again
         $("#restoreGimbalMenu").val("none");
@@ -267,7 +276,8 @@
 
 
       /*
-
+        Callback for the Save rotation button.
+        Adds this rotation to the drop down menu.
       */
       function saveRotation(){
         var name = $("#saveRotationLabel").val();
@@ -276,7 +286,7 @@
           $("#saveRotationLabel").attr("placeholder", "Name is mandatory!")
         }else{
 
-          mincNavigator.saveGimbalOrientation(name);
+          mincNavigator.saveGimbalSettings(name);
           updateRestoreRotationMenu();
           $("#saveRotationLabel").val('');
           $("#saveRotationLabel").attr("placeholder", name + " saved!");
@@ -284,10 +294,7 @@
           setTimeout(function(){
             $("#saveRotationLabel").attr("placeholder", "name");
           }, 1500);
-
         }
-
-
       }
 
 
@@ -299,7 +306,6 @@
           $("#angleToRotate").val("");
           return;
         }
-
         mincNavigator.rotateDegree(angle, axis);
       }
 
@@ -341,6 +347,9 @@
           saveRotation();
         });
 
+
+
+
         updateRestoreRotationMenu();
 
         // when everything is ready, we fade out the splashscreen to show the actuall app
@@ -349,32 +358,11 @@
 
 
 
-        /*
-      // find the coordinates within a canvas
 
-      var canvas = document.getElementById('ObliqueOrthoU_canvas');
-      canvas.addEventListener('mousemove', function(evt) {
-
-
-        var scale = $('#ObliqueOrthoU_canvas').attr('scale');
-        if(typeof scale == "undefined")
-          scale = 1;
-
-        var rect = canvas.getBoundingClientRect();
-        var x = (evt.clientX - rect.left) / scale;
-        var y = (evt.clientY - rect.top) / scale;
-        // they are fromthe size of the div, not the canvas!
-        console.log(x + ' ' + y);
-
-      }, false);
-
-      */
-
-      //$('#ObliqueOrthoU_canvas').mousemove(function( evt ) {
+      /*
+      // KEEP FOR LATER
+      // Getting canvas coord from scrolling
       $('#ObliqueOrthoU_canvas').on('mousemove', function( evt ) {
-        //console.log( $(evt.target).attr("scale"));
-        console.log( $(this).attr("scale"));
-
         var scale = $(this).attr("scale");
 
         // in case we never zoom/unzoom
@@ -389,10 +377,8 @@
         console.log(rect);
         var x = ((evt.clientX - rect.left) / rect.width) * originalW;
         var y = ((evt.clientY - rect.top) / rect.height) * originalH;
-
         console.log(x + ' ' + y);
-
       });
-
+      */
 
 }

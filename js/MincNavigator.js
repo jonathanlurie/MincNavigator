@@ -97,7 +97,8 @@ MincNavigator.prototype.initVolumeNavigator = function(){
   this._volumeNavigator = new VolumeNavigator(
     outerBoxOptions,
     null,
-    this.navigatorDomName
+    this.navigatorDomName,
+    false // display a gui?
   );
 
   // optional: this callback is called when a slider is moving (mouse down)
@@ -628,16 +629,16 @@ MincNavigator.prototype.setPlaneNormalAndPoint = function(nomal, point){
   Args:
     name: String - has to be unique (or wont be saved)
 */
-MincNavigator.prototype.saveGimbalOrientation = function(name){
-  this._volumeNavigator.saveQuaternion(name, false, null);
+MincNavigator.prototype.saveGimbalSettings = function(name){
+  this._volumeNavigator.saveGimbalSettings(name, false, null);
 }
 
 
 /*
-  Returns the list of names used as ID for saved quaternions/gimbal orientations
+  Returns the list of names used as ID for saved gimbal settings (quat+center)
 */
 MincNavigator.prototype.getGimbalOrientationNames = function(){
-  return this._volumeNavigator.getSavedQuaternionsNameList();
+  return this._volumeNavigator.getsavedGimbalSettingsNameList();
 }
 
 
@@ -646,8 +647,8 @@ MincNavigator.prototype.getGimbalOrientationNames = function(){
   Args:
     name: String - unique identifier
 */
-MincNavigator.prototype.restoreGimbalOrientation = function(name){
-  this._volumeNavigator.restoreQuaternion(name, true); // execute the callbacks
+MincNavigator.prototype.restoreGimbalSettings = function(name){
+  this._volumeNavigator.restoreGimbalSettings(name, true); // execute the callbacks
 }
 
 
@@ -656,4 +657,14 @@ MincNavigator.prototype.restoreGimbalOrientation = function(name){
 */
 MincNavigator.prototype.rotateDegree = function(angle, axis){
   this._volumeNavigator.rotateDegreeAndUpdate(angle, axis); // execute the callbacks
+}
+
+
+
+MincNavigator.prototype.tiltGimbalU = function(){
+  this._volumeNavigator.tiltGimbalU();
+}
+
+MincNavigator.prototype.tiltGimbalV = function(){
+  this._volumeNavigator.tiltGimbalV();
 }

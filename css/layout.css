@@ -17,12 +17,14 @@ body{
 #sideBar{
   float: left;
   height: 100%;
-  width: 200px;
+  width: 213px; /* so that the scrollbar is out! */
   background-color: #666;
   padding-top: 10px;
   background: url(../images/backgroundSide6.jpg) no-repeat center center fixed;
   background-size: cover;
+  overflow-y: scroll;
 }
+
 
 
 #mainView{
@@ -239,7 +241,11 @@ body{
   margin-left: 5px;
   border-radius: 50%;
   cursor: pointer;
+  transition: all 0.2s;
 }
+
+
+
 
 
 .obliqueControls .roundButton .fa{
@@ -283,6 +289,11 @@ body{
 #sw .obliqueControls .roundButton input
 {
   color: hsl(120, 100%, 40%);
+}
+
+
+.obliqueControls .roundButton:hover{
+  filter: invert(75%);
 }
 
 

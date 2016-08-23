@@ -662,28 +662,42 @@ MincNavigator.prototype.rotateDegree = function(angle, axis){
 }
 
 
-
+/*
+  Ask volumeNav to tilt so that the U ortho plane becomes the reference plane
+*/
 MincNavigator.prototype.tiltGimbalU = function(){
   this._volumeNavigator.tiltGimbalU();
 }
 
+
+/*
+  Ask volumeNav to tilt so that the V ortho plane becomes the reference plane
+*/
 MincNavigator.prototype.tiltGimbalV = function(){
   this._volumeNavigator.tiltGimbalV();
 }
 
 
-
-
+/*
+  Save in attribute the first point to perform a 2 points cross section
+*/
 MincNavigator.prototype.twoPointsSectionSetP1 = function(){
   this.twoPointsSection[0] = this._volumeNavigator.getGimbalCenter();
 }
 
 
+/*
+  Save in attribute the second point to perform a 2 points cross section
+*/
 MincNavigator.prototype.twoPointsSectionSetP2 = function(){
   this.twoPointsSection[1] = this._volumeNavigator.getGimbalCenter();
 }
 
 
+/*
+  Ask volumeNav to perform a 2 points cross section with the
+  2 points previously saved (this.twoPointsSection[])
+*/
 MincNavigator.prototype.updateTwoPointsSection = function(){
   this._volumeNavigator.planeFromTwoPoints(
     this.twoPointsSection[0],
@@ -692,6 +706,44 @@ MincNavigator.prototype.updateTwoPointsSection = function(){
 }
 
 
+/*
+  Erase the 2 points so that a cross section is not possible anymore
+*/
 MincNavigator.prototype.resetPointsSection = function(){
   this.twoPointsSection = [null, null];
+}
+
+
+/*
+  called as a generic method to move along the normal, U ortho or V ortho.
+  Args:
+    axisName: String - must be of "n", "u" or "v"
+    factor: Number - factor of the unit vector the gimbal will move of (in the targeted direction)
+*/
+MincNavigator.prototype.moveAlongAxis = function(axisName, factor){
+
+  // select the axis
+  if(axisName == "n"){
+    this._volumeNavigator.moveAlongNormal(factor);
+  }else if(axisName == "u"){
+    this._volumeNavigator.moveAlongOrthoU(factor);
+  }else if(axisName == "v"){
+    this._volumeNavigator.moveAlongOrthoV(factor);
+  }
+}
+
+
+/*
+  Undo the last step. Can be perform as long as the stack of step is not empty.
+*/
+MincNavigator.prototype.undo = function(){
+  this._volumeNavigator.undo(true);
+}
+
+
+/*
+  Undo the last step. Can be perform as long as the stack of step is not empty
+*/
+MincNavigator.prototype.redo = function(){
+  this._volumeNavigator.redo(true);
 }

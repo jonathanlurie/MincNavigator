@@ -125,7 +125,6 @@ MincNavigator.prototype.initVolumeNavigator = function(){
 
   // when spining the x axis
   this._volumeNavigator.setCallback("onOrbitingX", function(){
-    console.log("orbiting on X...");
     // the main oblique
     that.updateSliceEngine(
       "ObliqueMain",
@@ -148,8 +147,6 @@ MincNavigator.prototype.initVolumeNavigator = function(){
 
   // when spining the y axis
   this._volumeNavigator.setCallback("onOrbitingY", function(){
-    console.log("orbiting on Y...");
-
     // the main oblique
     that.updateSliceEngine(
       "ObliqueMain",

@@ -38,15 +38,16 @@
 <body>
 
 
-  <!--
+
   <div class="splashcreen">
     <div class="splashContent">
       <img class="logo" src="images/logo.png"/>
-      <div class="buttonBB noselect openfile" onclick="document.getElementById('fileOpener').click()">Open file</div>
+      <div class="buttonBB noselect openfile" onclick="document.getElementById('fileOpener').click()"><i class="fa fa-cube" aria-hidden="true"></i>
+ Open file</div>
       <div class="isLoading" style="display: none;">File is loading...</div>
     </div>
   </div>
-  -->
+
 
 
 
@@ -58,16 +59,15 @@
       <div id="sideBar">
         <img id="sideBarLogo" src="images/logo.png"/>
         <input type="file" id="fileOpener" class="hidden">
-        <div class="buttonBB noselect" onclick="document.getElementById('fileOpener').click()">Open file</div>
+        <div class="buttonBB noselect" onclick="document.getElementById('fileOpener').click()"><i class="fa fa-cube" aria-hidden="true"></i>
+ Open file</div>
 
         <div class="separator"></div>
 
 
         <div class="twoButtons">
-          <div id="undoBt" class="buttonBB noselect"><i class="fa fa-undo" aria-hidden="true"></i>
- Undo</div>
-          <div id="redoBt" class="buttonBB noselect"><i class="fa fa-repeat" aria-hidden="true"></i>
- Redo</div>
+          <div id="undoBt" class="buttonBB noselect"><i class="fa fa-undo" aria-hidden="true"></i>Undo</div>
+          <div id="redoBt" class="buttonBB noselect"><i class="fa fa-repeat" aria-hidden="true"></i>Redo</div>
         </div>
 
 
@@ -86,7 +86,7 @@
           <input id="normalY" type="text" class="commonTextField" value="" autocomplete="off">
           <input id="normalZ" type="text" class="commonTextField" value="" autocomplete="off">
         </div>
-        <div id="updateGimbalBt" class="buttonBB noselect">Update</div>
+        <div id="updateGimbalBt" class="buttonBB noselect"><i class="fa fa-refresh" aria-hidden="true"></i> Update</div>
 
 
         <div class="separator"></div>
@@ -94,12 +94,12 @@
 
         <div class="label">Two points section</div>
         <div class="twoButtons">
-          <div id="acpcAcBt" class="buttonBB noselect">point 1</div>
-          <div id="acpcPcBt" class="buttonBB noselect">point 2</div>
+          <div id="acpcAcBt" class="buttonBB noselect"><i class="fa fa-dot-circle-o" aria-hidden="true"></i>P1</div>
+          <div id="acpcPcBt" class="buttonBB noselect"><i class="fa fa-dot-circle-o" aria-hidden="true"></i>P2</div>
         </div>
         <div class="twoButtons">
-          <div id="resetAcpcBt" class="buttonBB noselect">Reset</div>
-          <div id="updateAcpcBt" class="buttonBB noselect">Update</div>
+          <div id="resetAcpcBt" class="buttonBB noselect"><i class="fa fa-eraser" aria-hidden="true"></i>Reset</div>
+          <div id="updateAcpcBt" class="buttonBB noselect"><i class="fa fa-refresh" aria-hidden="true"></i>Update</div>
         </div>
 
 
@@ -115,27 +115,29 @@
             <option value="2">z</option>
           </select>
         </div>
-        <div id="updateAngleBt" class="buttonBB noselect">Tilt</div>
+        <div id="updateAngleBt" class="buttonBB noselect"><i class="fa fa-refresh" aria-hidden="true"></i> Update</div>
 
 
         <div class="separator"></div>
 
 
-        <div class="label">Save current rotation</div>
+        <div class="label">Bookmark current rotation</div>
         <input type="text" id="saveRotationLabel" class="singleTextField commonTextField" value="" placeholder="name" autocomplete="off">
-        <div id="saveRotationBt" class="buttonBB noselect">Save</div>
+        <div id="saveRotationBt" class="buttonBB noselect"><i class="fa fa-bookmark" aria-hidden="true"></i>
+ Bookmark</div>
 
         <div class="separator"></div>
 
 
-        <div class="label">Restore rotation</div>
+        <div class="label">Restore bookmark</div>
         <select id="restoreGimbalMenu" class="dropdownMenu" onchange="restoreRotation();" autocomplete="off">
         </select>
 
 
         <div class="separator"></div>
 
-        <div id="toggleGimbalBt" class="buttonBB noselect">Toggle gimbal</div>
+        <div id="toggleGimbalBt" class="buttonBB noselect"><i class="fa fa-compass" aria-hidden="true"></i>
+ Toggle gimbal</div>
         <!-- <input type="text" class="singleTextField commonTextField" value="hello"> -->
 
 

@@ -18,7 +18,7 @@ body{
 #sideBar{
   float: left;
   height: 100%;
-  width: 213px; /* so that the scrollbar is out! */
+  width: 215px; /* so that the scrollbar is out! */
   background-color: #666;
   padding-top: 10px;
   background: url(../images/backgroundSide6.jpg) no-repeat center center fixed;

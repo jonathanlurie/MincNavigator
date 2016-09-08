@@ -2,8 +2,8 @@
 cd js-lib/
 
 # removing links if any
-rm js-lib/MincReaderJS
-rm js-lib/VolumeNavigator
+rm MincReaderJS
+rm VolumeNavigator
 
 # cloning dependencies (dev versions)
 git clone https://github.com/jonathanlurie/VolumeNavigator.git

@@ -38,7 +38,7 @@
 <body>
 
 
-
+  <!--
   <div class="splashcreen">
     <div class="splashContent">
       <img class="logo" src="images/logo.png"/>
@@ -47,10 +47,7 @@
       <div class="isLoading" style="display: none;">File is loading...</div>
     </div>
   </div>
-
-
-
-
+  -->
 
     <div id="content">
 
@@ -58,8 +55,15 @@
       <!-- Sidebar content -->
       <div id="sideBar">
         <img id="sideBarLogo" src="images/logo.png"/>
+
+        <a href="help.html" target="_blank">
+        <div class="buttonBB noselect"><i class="fa fa-question-circle"></i> Help</div>
+        </a>
+
         <input type="file" id="fileOpener" class="hidden">
         <div class="buttonBB noselect" onclick="document.getElementById('fileOpener').click()"><i class="fa fa-cube" aria-hidden="true"></i> Open file</div>
+
+
 
         <div class="separator"></div>
 
@@ -120,7 +124,7 @@
         <div class="separator"></div>
 
 
-        <div class="label">Bookmark current rotation</div>
+        <div class="label">Bookmark current settings</div>
         <input type="text" id="saveRotationLabel" class="singleTextField commonTextField" value="" placeholder="name" autocomplete="off">
         <div id="saveRotationBt" class="buttonBB noselect"><i class="fa fa-bookmark" aria-hidden="true"></i>
  Bookmark</div>

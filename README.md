@@ -2,6 +2,8 @@
 A visualization project for [Minc files v2](https://en.wikibooks.org/wiki/MINC/SoftwareDevelopment/MINC2.0_File_Format_Reference). MincNavigator performs oblique slices in real time with client side Javascript.  
 
 Since the oblique slices are computed as the user play with the sliders, the time response depends on the kind of computer you have.
+[DEMO](http://mcgill.jonathanlurie.fr/mincnavigator/)
+![](help-images/all.jpg)
 
 ## Compatible files
 Minc2 files format is based on HDF5, a good source for this kind of file is the [BigBrain](https://bigbrain.loris.ca/main.php) project. Thought, you should considere a drastically subsampled file, in 8bits:  

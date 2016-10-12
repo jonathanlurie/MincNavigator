@@ -5,6 +5,9 @@ body{
   font-size: 14px;
 }
 
+a{
+  text-decoration: none;
+}
 
 #content{
   position: absolute;

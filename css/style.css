@@ -2,7 +2,11 @@ body{
     margin: none;
     background-color: #FFF;
     color: #AAA;
-    
+
+}
+
+a{
+  text-decoration: none;
 }
 
 #navigatorDiv{

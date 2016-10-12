@@ -396,3 +396,17 @@ select{
   width: calc(100% - 2*10px);
   box-sizing:border-box;
 }
+
+
+.splashHint{
+  margin-top:20px
+}
+
+.splashHint a{
+  text-decoration: underline;
+  color: rgb(0, 149, 204);
+}
+
+.splashHint a:hover{
+  text-decoration: none;
+}

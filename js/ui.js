@@ -18,7 +18,9 @@ function openMinc2(buffer){
 function handleFileSelect(evt) {
   // dealing with splashcreen
   $(".splashcreen .splashContent .openfile").hide();
+  $(".splashcreen .splashContent .splashHint").hide();
   $(".splashcreen .splashContent .isLoading").show();
+
 
     var files = evt.target.files; // FileList object
 

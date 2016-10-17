@@ -43,6 +43,26 @@ function handleFileSelect(evt) {
 }
 
 
+function addScrollTraveling(){
+
+  $(".gridCell").bind('mousewheel DOMMouseScroll', function(event){
+
+    var travelDirection = $(this).attr("travel");
+    var factor = parseFloat( $(this).find("input").val());
+
+    if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
+      factor *= -1;
+    }
+
+    
+    mincNavigator.moveAlongAxis(travelDirection, factor);
+
+  });
+
+}
+
+
+
 /*
   element is a jquery obj, in this case a canvas.
   It makes this element dragable and zoomable, still it does not
@@ -56,6 +76,8 @@ function addZoomingAndPanning(element){
   var zoomFactor = 1.05;
 
   element.css("transform", "scale(" + scale + ")");
+
+
 
   element.bind('mousewheel DOMMouseScroll', function(event){
     var parentWidth = element.parent().width();
@@ -103,8 +125,55 @@ function addZoomingAndPanning(element){
     element.css("left" , adjustLeft + "px");
     element.css("top" , adjustTop + "px");
   });
+
+
+
 }
 
+
+/*
+  Increase the zoom of a .brainSlice by a factor.
+  cardinalParent is : nw, sw or se
+*/
+function zoomBrainSlice(cardinalParent, zoomFactor){
+
+  // the element to zoom is the canvas with the class brainSlice
+  var element = $("#" + cardinalParent).find(".brainSlice");
+  var scale = parseFloat( $(element).attr("scale") );
+
+  var parentHeight = element.parent().height();
+
+  // getting the (css) left offset
+  var left = element.css("left");
+  if(typeof left == "undefined"){
+    left = 0;
+  }else{
+    // removing the ending "px"
+    left = parseFloat(left.slice(0, -2));
+  }
+
+  // getting the (css) top offset
+  var top = element.css("top");
+  if(typeof top == "undefined"){
+    top = 0;
+  }else{
+    // removing the ending "px"
+    top = parseFloat(top.slice(0, -2));
+  }
+
+  scale *= zoomFactor;
+  element.css("transform", "scale(" + scale + ")");
+  adjustLeft = left * zoomFactor;
+  adjustTop = top*zoomFactor +  ((zoomFactor - 1) * parentHeight) / 2;
+
+
+  element.attr("scale", scale);
+
+  // adjust the top and left offset
+  element.css("left" , adjustLeft + "px");
+  element.css("top" , adjustTop + "px");
+
+}
 
 /*
   Place the element (jquery obj, most likely a canvas) at the center
@@ -136,12 +205,20 @@ window.onload = function(){
       console.log('The File APIs are not fully supported in this browser.');
   }
 
+  /*
   // adding the zooming and panning to the canvas.
   // No need to have the files loaded for that...
   addZoomingAndPanning($("#ObliqueMain_canvas"));
   addZoomingAndPanning($("#ObliqueOrthoU_canvas"));
   addZoomingAndPanning($("#ObliqueOrthoV_canvas"));
+  */
 
+  // adds the panning to canvas
+  $("#ObliqueMain_canvas").draggable();
+  $("#ObliqueOrthoU_canvas").draggable();
+  $("#ObliqueOrthoV_canvas").draggable();
+
+  addScrollTraveling();
 }
 
 
@@ -154,6 +231,18 @@ function initObliqueControls(){
   $("#nw .obliqueControls .arrowDown").click(function(){
     var factor = parseFloat($("#nw .obliqueControls input").val()) * -1;
     mincNavigator.moveAlongAxis("n", factor);
+  });
+
+
+
+  $(".zoomPlus").click(function(){
+    var cardinalParent = $(this).closest(".gridCell").attr("id");
+    zoomBrainSlice(cardinalParent, 1.2);
+  });
+
+  $(".zoomMinus").click(function(){
+    var cardinalParent = $(this).closest(".gridCell").attr("id");
+    zoomBrainSlice(cardinalParent, 1/1.2);
   });
 
   $("#sw .obliqueControls .arrowUp").click(function(){

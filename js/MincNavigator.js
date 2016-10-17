@@ -1,7 +1,7 @@
 /*
   Author: Jonathan Lurie
   Institution: McGill University, Montreal Neurological Institute - MCIN
-  Date: started on Jully 2016
+  Date: Jully 2016
   email: lurie.jo@gmail.com
   License: MIT
 

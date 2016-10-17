@@ -14,3 +14,9 @@ or this larger one: ftp://bigbrain.loris.ca/BigBrainRelease.2015/3D_Volumes/Hist
 To run MincNavigator, you have to copy two other project in the `js` folder:  
 - [VolumeNavigator](https://github.com/jonathanlurie/VolumeNavigator)
 - [MincReaderJS](https://github.com/jonathanlurie/MincReaderJS)
+
+# TODO
+Navigator is still a prototype and obviously needs some work to be a complet tool:  
+[x] Use the scrolling on each canvas to go forward/backward, instead of zooming. The system as to detect when the user is done scrolling so that it generates a a full rez image.  
+[x] Due to the first point, replace the arrow up/down of each canvas to zooming +/- buttons (or maybe a slider)  
+[ ] Detect when the user is idle (in term of loading new slices) so that we can cache the next/previous full rez slice in the background (use webworkers). How long do we keep them?

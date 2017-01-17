@@ -38,7 +38,7 @@
 <body>
 
 
-  <!--
+
   <div class="splashcreen">
     <div class="splashContent">
       <img class="logo" src="images/logo.png"/>
@@ -48,7 +48,7 @@
       <div class="splashHint">Don't have any Minc file? Try with the BigBrain at <a href="ftp://bigbrain.loris.ca/BigBrainRelease.2015/3D_Volumes/Histological_Space/full8_200um_optbal.mnc">200um</a> or <a href="ftp://bigbrain.loris.ca/BigBrainRelease.2015/3D_Volumes/Histological_Space/full8_400um_optbal.mnc">400um</a>.</div>
     </div>
   </div>
--->
+
 
     <div id="content">
 
@@ -62,8 +62,10 @@
         </a>
 
         <input type="file" id="fileOpener" class="hidden">
-        <div class="buttonBB noselect" onclick="document.getElementById('fileOpener').click()"><i class="fa fa-cube" aria-hidden="true"></i> Open file</div>
+        <div id="openFileBt" class="buttonBB noselect" onclick="document.getElementById('fileOpener').click()"><i class="fa fa-cube" aria-hidden="true"></i> Open file</div>
 
+        <!--
+        <div id="debugButton" class="buttonBB noselect"><i class="fa fa-bug" aria-hidden="true"></i> Debug</div>-->
 
 
         <div class="separator"></div>
@@ -144,10 +146,11 @@
  Toggle gimbal</div>
         <!-- <input type="text" class="singleTextField commonTextField" value="hello"> -->
 
-
-
         <div class="separator"></div>
 
+        <div id="githubCredit" class="label"><a href="https://github.com/jonathanlurie/MincNavigator" target="_blank"><i class="fa fa-github" aria-hidden="true"></i> Fork me on Github!</a></div>
+
+        <div class="separator"></div>
       </div>
 
 

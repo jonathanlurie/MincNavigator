@@ -7,8 +7,8 @@ var mincNavigator = null;
   the buffer is supposed to be an hdf5
 */
 function openMinc2(buffer){
-    mincNavigator = new MincNavigator(buffer);
-    onFileLoaded();
+  mincNavigator = new MincNavigator(buffer);
+  onFileLoaded();
 }
 
 
@@ -54,7 +54,7 @@ function addScrollTraveling(){
       factor *= -1;
     }
 
-    
+
     mincNavigator.moveAlongAxis(travelDirection, factor);
 
   });
@@ -219,7 +219,95 @@ window.onload = function(){
   $("#ObliqueOrthoV_canvas").draggable();
 
   addScrollTraveling();
+
+  //loadMincAjax();
+
+  $("#debugButton").click(function(){
+    console.log("hello");
+
+    loadArrayBuffer(
+      "data/full8_400um_optbal.mnc",
+
+      function(data){
+        openMinc2(data);
+      },
+
+      function(status){
+        console.log("Couldnt open the file");
+      }
+    )
+
+
+  });
 }
+
+
+function loadMincAjax(){
+
+  $("#openFileBt").hide();
+  $(".splashcreen .splashContent .openfile").hide();
+  $(".splashcreen .splashContent .splashHint").hide();
+  $(".splashcreen .splashContent .isLoading").show();
+
+
+  loadArrayBuffer(
+    "data/full8_400um_optbal.mnc",
+
+    function(data){
+      openMinc2(data);
+    },
+
+    function(status){
+      console.log("Couldnt open the file");
+    }
+  )
+}
+
+
+
+
+
+/*
+* AJAX load a binary file, and somthing with it.
+*
+*/
+function loadArrayBuffer(url, successCallback, errorCallback) {
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.responseType = "arraybuffer";
+
+    xhr.onload = function (oEvent) {
+      var status = xhr.status;
+      var arrayBuffer = xhr.response;
+
+      if (arrayBuffer) {
+        var blob = new Blob([arrayBuffer]);
+        var fileReader = new FileReader();
+
+        fileReader.onload = function(event) {
+          console.log(event.target.result);
+          successCallback && successCallback(event.target.result);
+        };
+
+        fileReader.onerror = function(event){
+          errorCallback && errorCallback(event);
+        }
+
+        fileReader.readAsArrayBuffer(blob);
+      }
+    };
+
+    xhr.onerror = function(e){
+      console.error("Can't find the file " + url);
+      errorCallback && errorCallback(status);
+    }
+
+    xhr.send(null);
+  }
+
+
+
 
 
 function initObliqueControls(){
@@ -448,6 +536,7 @@ function initSidebarCallbacks(){
   $("#saveRotationBt").click(function(){
     saveRotation();
   });
+
 
   setCallbackACPCSection();
   updateRestoreRotationMenu();

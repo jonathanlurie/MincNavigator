@@ -7,6 +7,12 @@ body{
 
 a{
   text-decoration: none;
+  color: hsl(196, 100%, 40%);
+  transition: all 0.2s;
+}
+
+a:hover {
+  color: hsl(196, 100%, 30%);
 }
 
 #content{
@@ -409,4 +415,9 @@ select{
 
 .splashHint a:hover{
   text-decoration: none;
+}
+
+
+#githubCredit {
+  font-size: large;
 }

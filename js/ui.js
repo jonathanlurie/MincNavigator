@@ -220,7 +220,7 @@ window.onload = function(){
 
   addScrollTraveling();
 
-  //loadMincAjax();
+  loadDynamicMinc();
 
   $("#debugButton").click(function(){
     console.log("hello");
@@ -237,21 +237,55 @@ window.onload = function(){
       }
     )
 
-
   });
 }
 
 
-function loadMincAjax(){
+/*
+  Get the localStorage value for the
+*/
+function getDynamicMincUrl(){
+  var mincUrl = null;
+
+  // local storage is available
+  if (typeof(Storage) !== "undefined") {
+    var localStorageKey = "mincUrl";
+    var mincUrl = localStorage.getItem( localStorageKey );
+
+    if( mincUrl ){
+      // remove the key so that the user could use another instance of MincNavigator
+      localStorage.removeItem(localStorageKey);
+    }else{
+      console.log("the key '" + localStorageKey + "' does not exist in LocalStorage.");
+    }
+
+  // local storage NOT available
+  } else {
+    console.log("LocalStorage is not available on your Browser.");
+  }
+
+  return mincUrl;
+}
+
+
+/*
+  Ask what is the minc dynamic url and loads it.
+  If none was found in the localStorage, just dont load anything but
+  leaves the open button visible.
+*/
+function loadDynamicMinc(){
+  var mincUrl = getDynamicMincUrl();
+
+  if( !mincUrl )
+    return;
 
   $("#openFileBt").hide();
   $(".splashcreen .splashContent .openfile").hide();
   $(".splashcreen .splashContent .splashHint").hide();
   $(".splashcreen .splashContent .isLoading").show();
 
-
   loadArrayBuffer(
-    "data/full8_400um_optbal.mnc",
+    mincUrl,
 
     function(data){
       openMinc2(data);

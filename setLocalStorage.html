@@ -1,0 +1,27 @@
+<html>
+<head>
+
+</head>
+<body>
+
+
+  <a href="index.html">Go to MincNavigator</a>
+
+
+  <script>
+
+  // local storage is available
+  if (typeof(Storage) !== "undefined") {
+
+    localStorage.setItem("mincUrl", "data/full8_200um_optbal.mnc");
+
+  // local storage NOT available
+  } else {
+    console.log("LocalStorage is not available on your Browser.");
+  }
+
+
+
+  </script>
+</body>
+</html>
